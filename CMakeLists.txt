@@ -29,7 +29,11 @@ set(CMAKE_AUTOUIC_SEARCH_PATHS "${CMAKE_SOURCE_DIR}/notepad")
 add_executable(SAE201 main.cpp
         notepad/notepad.cpp
         notepad/notepad.h
-        notepad/notepad.ui)
+        notepad/notepad.ui
+        parcours/Parcours.cpp
+        parcours/Parcours.h
+        etape/Etape.cpp
+        etape/Etape.h)
 target_link_libraries(SAE201
         Qt::Core
         Qt::Gui
