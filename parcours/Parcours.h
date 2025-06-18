@@ -8,7 +8,10 @@
 
 class Parcours {
 
-private:
+//private:
+
+
+public:
     QString nom;
     QString ville;
     int departement;
@@ -17,8 +20,6 @@ private:
     float kilometre;
     QString image;
     QVector<Etape*> etapes;
-
-public:
     Parcours();
     Parcours(const QString &nom, const QString &ville, int departement, unsigned int difficulte, float duree,
              float kilometre, const QString &image);

@@ -13,6 +13,9 @@
 #include <QColorDialog>
 #include <QPrinter>
 #include <iostream>
+#include "../parcours/Parcours.h"
+#include "../etape/Etape.h"
+
 
 
 QT_BEGIN_NAMESPACE

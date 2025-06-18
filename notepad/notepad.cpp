@@ -131,9 +131,22 @@ void Notepad::exportPDF() {
 }
 
 void Notepad::exportMap() {
-// exporte la map en HTML
-    QString fileName = QFileDialog::getSaveFileName(this, "Exporter la carte",
-                                                    "", "Fichiers HTML (*.html)");
+    // Création d'étapes et d'un parcours de test
+    Parcours parcoursToulouse("Découverte de Toulouse", "Toulouse", 31, 2, 3.5, 5.2, "toulouse.jpg");
+
+    // Ajout d'étapes au parcours
+    Etape etape1("Capitole", 43.6045, 1.4442, "Place principale de Toulouse", 1);
+    Etape etape2("Basilique Saint-Sernin", 43.6073, 1.4415, "Plus grande église romane d'Europe", 2);
+    Etape etape3("Jardin des Plantes", 43.5922, 1.4504, "Jardin botanique historique", 3);
+    Etape etape4("Cité de l'Espace", 43.5883, 1.4933, "Parc à thème spatial", 4);
+
+    parcoursToulouse.addEtape(etape1);
+    parcoursToulouse.addEtape(etape2);
+    parcoursToulouse.addEtape(etape3);
+    parcoursToulouse.addEtape(etape4);
+
+    // exporte la map en HTML
+    QString fileName = QFileDialog::getSaveFileName(this, "Exporter la carte", "", "Fichiers HTML (*.html)");
     if (fileName.isEmpty()) return;
 
     if (!fileName.endsWith(".html", Qt::CaseInsensitive))
@@ -145,41 +158,125 @@ void Notepad::exportMap() {
         return;
     }
 
+    // Version simplifiée HTML avec Leaflet intégré directement
     QTextStream out(&file);
-    // Écrire le contenu de la carte dans le fichier HTML
-    out << "<!DOCTYPE html>\
-<html>\
-<head>\
-    <title>Carte du monde avec Leaflet</title>\
-    <meta charset=\"utf-8\" />\
-    <link rel=\"stylesheet\" href=\"https://unpkg.com/leaflet/dist/leaflet.css\" />\
-    <style>\
-        #map { height: 600px; width: 100%; }\
-    </style>\
-</head>\
-<body>\
-    <div id=\"map\"></div>\
-    <script src=\"https://unpkg.com/leaflet/dist/leaflet.js\"></script>\
-    <script>\
-        try {\
-            var map = L.map('map').setView([20, 0], 2);\
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {\
-                attribution: '&copy; OpenStreetMap contributors'\
-            }).addTo(map);\
-            console.log('Carte chargée avec succès');\
-        } catch(error) {\
-            console.error('Erreur de chargement de la carte:', error);\
-            document.body.innerHTML += '<p style=\"color:red\">Erreur: ' + error.message + '</p>';\
-        }\
-    </script>\
-</body>\
+    out << "<!DOCTYPE html>\n\
+<html>\n\
+<head>\n\
+    <meta charset=\"utf-8\">\n\
+    <title>Carte du parcours</title>\n\
+    <style>\n\
+        html, body { height: 100%; margin: 0; padding: 0; }\n\
+        #map { height: 600px; width: 100%; }\n\
+        .info { padding: 6px 8px; background: white; background: rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; }\n\
+        #debug { position: fixed; bottom: 10px; left: 10px; background: white; padding: 10px; z-index: 1000; border: 1px solid red; display: none; }\n\
+    </style>\n\
+    <link rel=\"stylesheet\" href=\"https://unpkg.com/leaflet@1.9.4/dist/leaflet.css\" />\n\
+</head>\n\
+<body>\n\
+    <h2>Parcours: " + parcoursToulouse.nom + "</h2>\n\
+    <div id=\"map\"></div>\n\
+    <div id=\"debug\"></div>\n\
+    <script src=\"https://unpkg.com/leaflet@1.9.4/dist/leaflet.js\"></script>\n\
+    <script>\n\
+        // Fonction de débogage\n\
+        function debug(msg) {\n\
+            var debugElement = document.getElementById('debug');\n\
+            debugElement.style.display = 'block';\n\
+            debugElement.innerHTML += msg + '<br>';\n\
+            console.log(msg);\n\
+        }\n\
+\n\
+        // Attendre que tout soit chargé\n\
+        window.onload = function() {\n\
+            debug('Page chargée');\n\
+\n\
+            // Vérifier que Leaflet est chargé\n\
+            if (typeof L === 'undefined') {\n\
+                debug('ERREUR: Leaflet n\\'est pas chargé');\n\
+                return;\n\
+            }\n\
+\n\
+            debug('Leaflet trouvé, initialisation de la carte...');\n\
+\n\
+            try {\n\
+                // Création de la carte\n\
+                var map = L.map('map').setView([43.6045, 1.4442], 13);\n\
+                debug('Carte créée');\n\
+\n\
+                // Fonds de carte\n\
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {\n\
+                    attribution: '&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors'\n\
+                }).addTo(map);\n\
+                debug('Fond de carte ajouté');\n\
+\n\
+                // Points d'intérêt\n";
+
+    // Ajouter les marqueurs d'étapes manuellement
+    for (int i = 0; i < parcoursToulouse.etapes.size(); i++) {
+        Etape* etape = parcoursToulouse.etapes[i];
+        out << "                L.marker([" << etape->getLatitude() << ", " << etape->getLongitude() << "]).addTo(map)\n\
+                    .bindPopup(\"" << etape->getTitre() << "\");\n\
+                debug('Marqueur " << i+1 << " ajouté');\n";
+    }
+
+    // Continuer avec le tracé du parcours
+    out << "\n\
+                // Tracé du parcours\n\
+                var pathCoords = [\n";
+
+    // Ajouter les coordonnées du parcours
+    for (int i = 0; i < parcoursToulouse.etapes.size(); i++) {
+        Etape* etape = parcoursToulouse.etapes[i];
+        out << "                    [" << etape->getLatitude() << ", " << etape->getLongitude() << "]";
+        if (i < parcoursToulouse.etapes.size() - 1) {
+            out << ",\n";
+        } else {
+            out << "\n";
+        }
+    }
+
+    out << "                ];\n\
+                var path = L.polyline(pathCoords, {color: 'blue', weight: 4}).addTo(map);\n\
+                debug('Tracé du parcours ajouté');\n\
+\n\
+                // Ajuster la vue pour voir tout le parcours\n\
+                map.fitBounds(path.getBounds());\n\
+                debug('Zoom ajusté');\n\
+\n\
+                // Afficher info\n\
+                var info = L.control({position: 'topleft'});\n\
+                info.onAdd = function() {\n\
+                    var div = L.DomUtil.create('div', 'info');\n\
+                    div.innerHTML = '<h4>" + parcoursToulouse.nom + "</h4>' +\n\
+                        'Ville: " + parcoursToulouse.ville + "<br>' +\n\
+                        'Difficulté: " + QString::number(parcoursToulouse.difficulte) + "/5<br>' +\n\
+                        'Durée: " + QString::number(parcoursToulouse.duree) + " h<br>' +\n\
+                        'Distance: " + QString::number(parcoursToulouse.kilometre) + " km';\n\
+                    return div;\n\
+                };\n\
+                info.addTo(map);\n\
+                debug('Informations du parcours ajoutées');\n\
+                \n\
+                // Tout s'est bien passé, cacher le débogage\n\
+                setTimeout(function() {\n\
+                    document.getElementById('debug').style.display = 'none';\n\
+                }, 3000);\n\
+                \n\
+            } catch(e) {\n\
+                debug('ERREUR: ' + e.message);\n\
+            }\n\
+        };\n\
+    </script>\n\
+</body>\n\
 </html>";
 
     file.close();
+
     QMessageBox::information(this, "Exportation de la carte",
                            "Carte exportée avec succès en HTML.", QMessageBox::Ok);
 
-//oucerture de la carte dans le navigateur
+    // Ouverture de la carte dans le navigateur
     QDesktopServices::openUrl(QUrl::fromLocalFile(fileName));
 }
 
