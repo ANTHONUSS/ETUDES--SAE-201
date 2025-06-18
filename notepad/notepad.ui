@@ -41,6 +41,7 @@
     <addaction name="actionOuvrir"/>
     <addaction name="actionEnregistrer"/>
     <addaction name="actionEnregistrer_sous"/>
+    <addaction name="actionExporter"/>
     <addaction name="separator"/>
     <addaction name="actionQuitter"/>
    </widget>
@@ -77,14 +78,17 @@
    </attribute>
    <addaction name="actionAnnuler"/>
    <addaction name="actionRetablir"/>
+   <addaction name="separator"/>
    <addaction name="actionCopier"/>
    <addaction name="actionColler"/>
    <addaction name="actionCouper"/>
+   <addaction name="separator"/>
+   <addaction name="actionImage"/>
   </widget>
   <action name="actionNouveau">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/Images/images/new.png</normaloff>:/Images/images/new.png</iconset>
+     <normaloff>:/Icones/icones/new.png</normaloff>:/Icones/icones/new.png</iconset>
    </property>
    <property name="text">
     <string>Nouveau</string>
@@ -96,7 +100,7 @@
   <action name="actionOuvrir">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/Images/images/open.png</normaloff>:/Images/images/open.png</iconset>
+     <normaloff>:/Icones/icones/open.png</normaloff>:/Icones/icones/open.png</iconset>
    </property>
    <property name="text">
     <string>Ouvrir...</string>
@@ -108,7 +112,7 @@
   <action name="actionEnregistrer">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/Images/images/save.png</normaloff>:/Images/images/save.png</iconset>
+     <normaloff>:/Icones/icones/save.png</normaloff>:/Icones/icones/save.png</iconset>
    </property>
    <property name="text">
     <string>Enregistrer...</string>
@@ -120,7 +124,7 @@
   <action name="actionEnregistrer_sous">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/Images/images/save_as.png</normaloff>:/Images/images/save_as.png</iconset>
+     <normaloff>:/Icones/icones/save_as.png</normaloff>:/Icones/icones/save_as.png</iconset>
    </property>
    <property name="text">
     <string>Enregistrer sous...</string>
@@ -132,7 +136,7 @@
   <action name="actionQuitter">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/Images/images/exit.png</normaloff>:/Images/images/exit.png</iconset>
+     <normaloff>:/Icones/icones/exit.png</normaloff>:/Icones/icones/exit.png</iconset>
    </property>
    <property name="text">
     <string>Quitter</string>
@@ -144,7 +148,7 @@
   <action name="actionPolice">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/Images/images/font.png</normaloff>:/Images/images/font.png</iconset>
+     <normaloff>:/Icones/icones/font.png</normaloff>:/Icones/icones/font.png</iconset>
    </property>
    <property name="text">
     <string>Police...</string>
@@ -156,7 +160,7 @@
    </property>
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/Images/images/italic.png</normaloff>:/Images/images/italic.png</iconset>
+     <normaloff>:/Icones/icones/italic.png</normaloff>:/Icones/icones/italic.png</iconset>
    </property>
    <property name="text">
     <string>Italique</string>
@@ -171,7 +175,7 @@
    </property>
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/Images/images/bold.png</normaloff>:/Images/images/bold.png</iconset>
+     <normaloff>:/Icones/icones/bold.png</normaloff>:/Icones/icones/bold.png</iconset>
    </property>
    <property name="text">
     <string>Gras</string>
@@ -186,7 +190,7 @@
    </property>
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/Images/images/underline.png</normaloff>:/Images/images/underline.png</iconset>
+     <normaloff>:/Icones/icones/underline.png</normaloff>:/Icones/icones/underline.png</iconset>
    </property>
    <property name="text">
     <string>Souligner</string>
@@ -198,7 +202,7 @@
   <action name="actionAbout">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/Images/images/info.png</normaloff>:/Images/images/info.png</iconset>
+     <normaloff>:/Icones/icones/info.png</normaloff>:/Icones/icones/info.png</iconset>
    </property>
    <property name="text">
     <string>À propos...</string>
@@ -207,7 +211,7 @@
   <action name="actionCopier">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/Images/images/copy.png</normaloff>:/Images/images/copy.png</iconset>
+     <normaloff>:/Icones/icones/copy.png</normaloff>:/Icones/icones/copy.png</iconset>
    </property>
    <property name="text">
     <string>Copier</string>
@@ -219,7 +223,7 @@
   <action name="actionCouper">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/Images/images/cut.png</normaloff>:/Images/images/cut.png</iconset>
+     <normaloff>:/Icones/icones/cut.png</normaloff>:/Icones/icones/cut.png</iconset>
    </property>
    <property name="text">
     <string>Couper</string>
@@ -231,7 +235,7 @@
   <action name="actionColler">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/Images/images/paste.png</normaloff>:/Images/images/paste.png</iconset>
+     <normaloff>:/Icones/icones/paste.png</normaloff>:/Icones/icones/paste.png</iconset>
    </property>
    <property name="text">
     <string>Coller</string>
@@ -243,7 +247,7 @@
   <action name="actionAnnuler">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/Images/images/edit_undo.png</normaloff>:/Images/images/edit_undo.png</iconset>
+     <normaloff>:/Icones/icones/edit_undo.png</normaloff>:/Icones/icones/edit_undo.png</iconset>
    </property>
    <property name="text">
     <string>Annuler</string>
@@ -255,7 +259,7 @@
   <action name="actionRetablir">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/Images/images/edit_redo.png</normaloff>:/Images/images/edit_redo.png</iconset>
+     <normaloff>:/Icones/icones/edit_redo.png</normaloff>:/Icones/icones/edit_redo.png</iconset>
    </property>
    <property name="text">
     <string>Rétablir</string>
@@ -267,10 +271,32 @@
   <action name="actionCouleur">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
-     <normaloff>:/Images/images/pencil.png</normaloff>:/Images/images/pencil.png</iconset>
+     <normaloff>:/Icones/icones/pencil.png</normaloff>:/Icones/icones/pencil.png</iconset>
    </property>
    <property name="text">
     <string>Couleur...</string>
+   </property>
+  </action>
+  <action name="actionImage">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::ListAdd"/>
+   </property>
+   <property name="text">
+    <string>Image...</string>
+   </property>
+   <property name="toolTip">
+    <string>Importer Image...</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionExporter">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::DocumentPrintPreview"/>
+   </property>
+   <property name="text">
+    <string>Exporter...</string>
    </property>
   </action>
  </widget>

@@ -10,6 +10,7 @@
 #include <QMessageBox>
 #include <QFontDialog>
 #include <QColorDialog>
+#include <QPrinter>
 #include <iostream>
 
 
@@ -43,6 +44,10 @@ private slots:
     void redo();
 
     void showAbout();
+
+    void insertImage();
+
+    void exportPDF();
 
 private:
     Ui::Notepad *ui;

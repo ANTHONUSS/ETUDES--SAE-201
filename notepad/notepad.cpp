@@ -33,6 +33,10 @@ Notepad::Notepad(QWidget *parent)
     connect(ui->actionRetablir, &QAction::triggered, this, &Notepad::redo);
 
     connect(ui->actionAbout, &QAction::triggered, this, &Notepad::showAbout);
+
+    connect(ui->actionImage, &QAction::triggered, this, &Notepad::insertImage);
+
+    connect(ui->actionExporter, &QAction::triggered, this, &Notepad::exportPDF);
 }
 
 Notepad::~Notepad() {
@@ -110,16 +114,22 @@ void Notepad::selectFont() {
 }
 
 void Notepad::setItalic() {
-    ui->textArea->setFontItalic(!ui->textArea->fontItalic());
+    QTextCharFormat format;
+    format.setFontItalic(!ui->textArea->textCursor().charFormat().fontItalic());
+    ui->textArea->textCursor().mergeCharFormat(format);
 }
 
 void Notepad::setBold() {
-    int weight = ui->textArea->fontWeight() == QFont::Bold ? QFont::Normal : QFont::Bold;
-    ui->textArea->setFontWeight(weight);
+    QTextCharFormat format;
+    int weight = ui->textArea->textCursor().charFormat().fontWeight() == QFont::Bold ? QFont::Normal : QFont::Bold;
+    format.setFontWeight(weight);
+    ui->textArea->textCursor().mergeCharFormat(format);
 }
 
 void Notepad::setUnderline() {
-    ui->textArea->setFontUnderline(!ui->textArea->fontUnderline());
+    QTextCharFormat format;
+    format.setFontUnderline(!ui->textArea->textCursor().charFormat().fontUnderline());
+    ui->textArea->textCursor().mergeCharFormat(format);
 }
 
 void Notepad::setColor() {
@@ -149,4 +159,46 @@ void Notepad::redo() {
 void Notepad::showAbout() {
     QMessageBox::about(this, "À propos", "Notepad - Application de traitement de texte simple\n"
                                          "Créé par ANTHONUS avec l'aide du tuto QT");
+}
+
+void Notepad::insertImage() {
+    QString fileName = QFileDialog::getOpenFileName(this,
+        "Insérer une image", "", "Images (*.png *.jpg *.jpeg *.bmp *.gif)");
+
+    if (!fileName.isEmpty()) {
+        QImage image(fileName);
+        if (image.isNull()) {
+            QMessageBox::warning(this, "Erreur", "Impossible de charger l'image.");
+            return;
+        }
+
+        QTextCursor cursor = ui->textArea->textCursor();
+        QTextDocument *document = ui->textArea->document();
+
+        // Ajouter l'image au document
+        QUrl url = QUrl::fromLocalFile(fileName);
+        document->addResource(QTextDocument::ImageResource, url, QVariant(image));
+
+        // Insérer l'image au curseur actuel
+        cursor.insertImage(fileName);
+    }
+}
+
+void Notepad::exportPDF() {
+    QString fileName = QFileDialog::getSaveFileName(this, "Exporter en PDF",
+                                                  "", "Fichiers PDF (*.pdf)");
+    if (fileName.isEmpty()) return;
+
+    if (!fileName.endsWith(".pdf", Qt::CaseInsensitive))
+        fileName += ".pdf";
+
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setOutputFileName(fileName);
+
+    // Utilise le document existant avec toute sa mise en forme
+    ui->textArea->document()->print(&printer);
+
+    QMessageBox::information(this, "Exportation PDF",
+                           "Document exporté avec succès en PDF.", QMessageBox::Ok);
 }
