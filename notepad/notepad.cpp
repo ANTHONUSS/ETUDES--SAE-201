@@ -89,13 +89,29 @@ void Notepad::open() {
     unsigned short int difficulte = in.readLine().toInt();
     float duree = in.readLine().toFloat();
     float kilometre = in.readLine().toFloat();
-    QString image = in.readLine();
-
+    QString imagePath = in.readLine();
     QString entete = getDialog(in);
 
-    addParcours(nom, ville, departement, difficulte, duree, kilometre, image, entete);
+    addParcours(nom, ville, departement, difficulte, duree, kilometre, imagePath, entete);
+
+    ui->nomParcours->setText(nom);
+    ui->localisationInput->setText(ville);
+    ui->dptInput->setValue(departement);
+    ui->diffuculteInput->setValue(difficulte);
+    ui->dureeInput->setValue(duree);
+    ui->longueurInput->setValue(kilometre);
+    QImage img(imagePath);
+    if (!img.isNull()) {
+        ui->sideImage->setPixmap(QPixmap::fromImage(img));
+        ui->lineEdit->setText(imagePath);
+    } else {
+        ui->sideImage->setText("Image non trouvée");
+        ui->lineEdit->setText(QString());
+    }
+    //TODO: mettre l'entête ailleurs sur le graphique
 
     /* Chargement des étapes */
+    Parcours* lastParcours = parcoursList.last();
     while (!in.atEnd()) {
         unsigned short int index = in.readLine().toInt();
         QString titre = in.readLine();
@@ -103,10 +119,17 @@ void Notepad::open() {
         int reponse = in.readLine().toInt();
         QString dialog = getDialog(in);
 
-        Parcours* lastParcours = parcoursList.last();
         lastParcours->addEtape(titre, 0.0f, 0.0f, dialog, reponse); //TODO: Remplacer 0.0f par les valeurs réelles de latitude et longitude
 
     }
+
+    Etape* firstEtape = lastParcours->getEtape(0);
+    ui->numEtape->setValue(1);
+    ui->lineEdit_2->setText(firstEtape->getTitre());
+    ui->doubleSpinBox->setValue(firstEtape->getLatitude());
+    ui->doubleSpinBox_2->setValue(firstEtape->getLongitude());
+    ui->spinBox->setValue(firstEtape->getReponse());
+    ui->textArea->setHtml(firstEtape->getDialog());
 
     setWindowTitle("Notepad : " + fileName);
     file.close();
