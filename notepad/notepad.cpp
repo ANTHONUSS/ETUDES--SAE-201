@@ -38,6 +38,8 @@ Notepad::Notepad(QWidget *parent)
     connect(ui->actionImage, &QAction::triggered, this, &Notepad::insertImage);
 
     connect(ui->actionExporter, &QAction::triggered, this, &Notepad::exportPDF);
+
+    std::cout << "\t[+]NotePad" << std::endl;
 }
 
 Notepad::~Notepad() {
@@ -89,33 +91,37 @@ void Notepad::open() {
     float kilometre = in.readLine().toFloat();
     QString image = in.readLine();
 
-    QString entete;
-    QString content = in.readLine();
-    while (content != "%") {
-        entete += content + "\n"; // nom du boug
-
-        entete += getDialog(in);
-        content = in.readLine();
-    }
+    QString entete = getDialog(in);
 
     addParcours(nom, ville, departement, difficulte, duree, kilometre, image, entete);
 
     /* Chargement des étapes */
+    while (!in.atEnd()) {
+        unsigned short int index = in.readLine().toInt();
+        QString titre = in.readLine();
+        in.readLine(); //TODO: latitude / longitude
+        int reponse = in.readLine().toInt();
+        QString dialog = getDialog(in);
 
-    ui->textArea->setText(entete);
+        Parcours* lastParcours = parcoursList.last();
+        lastParcours->addEtape(titre, 0.0f, 0.0f, dialog, reponse); //TODO: Remplacer 0.0f par les valeurs réelles de latitude et longitude
+
+    }
 
     setWindowTitle("Notepad : " + fileName);
     file.close();
 }
 
 QString Notepad::getDialog(QTextStream& in) const {
-    QString dialogText;
+    QString dialog;
     QString content = in.readLine();
-    while (content != "#") {
-        dialogText += content + "\n";
+    while (content != "%") {
+        if (content != "#" && content != "%") {
+            dialog += content + "\n";
+        }
         content = in.readLine();
     }
-    return dialogText + "\n";
+    return dialog;
 }
 
 void Notepad::save() {

@@ -6,25 +6,27 @@
 
 
 class Parcours {
+	QString nom;
+	QString ville;
+	unsigned short int departement;
+	unsigned short int difficulte;
+	float duree;
+	float kilometre;
+	QString image;
+	QString entete;
+	QVector<Etape*> etapes;
+
+
 public:
     Parcours();
     Parcours(const QString &nom, const QString &ville, int departement, unsigned int difficulte, float duree,
              float kilometre, const QString &image, const QString &entete);
-
+	Parcours(const Parcours &p);
     ~Parcours();
 
-private:
-    QString nom;
-    QString ville;
-    unsigned short int departement;
-    unsigned short int difficulte;
-    float duree;
-    float kilometre;
-    QString image;
-	QString entete;
-    QVector<Etape*> etapes;
+	void addEtape(const QString &titre, float latitude, float longitude, const QString &dialog, int reponse);
 
-public:
+	friend std::ostream &operator<<(std::ostream &os, const Parcours &p);
 
 };
 

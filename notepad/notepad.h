@@ -22,6 +22,10 @@ QT_END_NAMESPACE
 class Notepad : public QMainWindow {
 Q_OBJECT
 
+	Ui::Notepad *ui;
+	QString currentFilePath;
+	QVector<Parcours*> parcoursList;
+
 public:
     explicit Notepad(QWidget *parent = nullptr);
     ~Notepad() override;
@@ -52,15 +56,6 @@ private slots:
     void redo();
 
     void showAbout();
-
-
-
-private:
-    Ui::Notepad *ui;
-
-    QString currentFilePath;
-
-    QVector<Parcours*> parcoursList;
 };
 
 

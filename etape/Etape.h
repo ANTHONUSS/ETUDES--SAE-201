@@ -9,16 +9,19 @@ class Etape {
     QString titre;
     float latitude;
     float longitude;
-    QString texte;
+    QString dialog;
     int reponse;
+
 public:
     Etape();
-    Etape(const QString &titre, float latitude, float longitude, const QString &texte, int reponse);
+    Etape(const QString &titre, float latitude, float longitude, const QString &dialog, int reponse);
     Etape(const Etape &e);
     ~Etape();
 
     void setLatitude(int d, float m, QChar NS);
     void setLongitude(int d, float, QChar EW);
+
+    friend std::ostream &operator<<(std::ostream &os, const Etape &e);
 
 };
 
