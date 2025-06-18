@@ -16,6 +16,19 @@ Parcours::Parcours(const QString &nom, const QString &ville, int departement, un
           kilometre(kilometre),
           image(image){}
 
+
+//méthodes
+void Parcours::addEtape(const Etape &e) {
+    Etape* step=new Etape(e.getTitre(), e.getLatitude() ,e.getLongitude(), e.getTexte(), e.getReponse());
+    etapes.push_back(step);
+}
+
+void Parcours::File(QFile* fichier){
+
+}
+
+
+//desctructeur
 Parcours::~Parcours() {
 
     for (Etape* e:etapes) {

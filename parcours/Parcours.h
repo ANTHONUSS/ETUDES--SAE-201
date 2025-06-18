@@ -1,4 +1,5 @@
 #include <QVector>
+#include <QFile>
 #include "../etape/Etape.h"
 
 #ifndef SAE201_PARCOURS_H
@@ -6,12 +7,6 @@
 
 
 class Parcours {
-public:
-    Parcours();
-    Parcours(const QString &nom, const QString &ville, int departement, unsigned int difficulte, float duree,
-             float kilometre, const QString &image);
-
-    ~Parcours();
 
 private:
     QString nom;
@@ -24,6 +19,14 @@ private:
     QVector<Etape*> etapes;
 
 public:
+    Parcours();
+    Parcours(const QString &nom, const QString &ville, int departement, unsigned int difficulte, float duree,
+             float kilometre, const QString &image);
+
+    void addEtape(const Etape &e);
+    void File(QFile* fichier);
+    ~Parcours();
+
 
 };
 
