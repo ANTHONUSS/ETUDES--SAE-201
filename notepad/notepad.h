@@ -7,6 +7,7 @@
 
 #include <QMainWindow>
 #include <QFileDialog>
+#include<QDesktopServices>
 #include <QMessageBox>
 #include <QFontDialog>
 #include <QColorDialog>
@@ -32,6 +33,7 @@ private slots:
     void saveAs();
     void exportPDF();
     void insertImage();
+    void exportMap();
 
     void selectFont();
     void setItalic();

@@ -192,7 +192,7 @@
          </property>
          <layout class="QGridLayout" name="gridLayout">
           <item row="0" column="0">
-           <widget class="QPushButton" name="pushButton_3">
+           <widget class="QPushButton" name="exportMap">
             <property name="text">
              <string>Export Map</string>
             </property>

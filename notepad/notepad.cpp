@@ -37,6 +37,7 @@ Notepad::Notepad(QWidget *parent)
     connect(ui->actionImage, &QAction::triggered, this, &Notepad::insertImage);
 
     connect(ui->actionExporter, &QAction::triggered, this, &Notepad::exportPDF);
+    connect(ui->exportMap, &QPushButton::clicked, this, &Notepad::exportMap);
 }
 
 Notepad::~Notepad() {
@@ -127,6 +128,59 @@ void Notepad::exportPDF() {
 
     QMessageBox::information(this, "Exportation PDF",
                            "Document exporté avec succès en PDF.", QMessageBox::Ok);
+}
+
+void Notepad::exportMap() {
+// exporte la map en HTML
+    QString fileName = QFileDialog::getSaveFileName(this, "Exporter la carte",
+                                                    "", "Fichiers HTML (*.html)");
+    if (fileName.isEmpty()) return;
+
+    if (!fileName.endsWith(".html", Qt::CaseInsensitive))
+        fileName += ".html";
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QFile::Text)) {
+        QMessageBox::warning(this, "Erreur", "Impossible d'exporter la carte : " + file.errorString());
+        return;
+    }
+
+    QTextStream out(&file);
+    // Écrire le contenu de la carte dans le fichier HTML
+    out << "<!DOCTYPE html>\
+<html>\
+<head>\
+    <title>Carte du monde avec Leaflet</title>\
+    <meta charset=\"utf-8\" />\
+    <link rel=\"stylesheet\" href=\"https://unpkg.com/leaflet/dist/leaflet.css\" />\
+    <style>\
+        #map { height: 600px; width: 100%; }\
+    </style>\
+</head>\
+<body>\
+    <div id=\"map\"></div>\
+    <script src=\"https://unpkg.com/leaflet/dist/leaflet.js\"></script>\
+    <script>\
+        try {\
+            var map = L.map('map').setView([20, 0], 2);\
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {\
+                attribution: '&copy; OpenStreetMap contributors'\
+            }).addTo(map);\
+            console.log('Carte chargée avec succès');\
+        } catch(error) {\
+            console.error('Erreur de chargement de la carte:', error);\
+            document.body.innerHTML += '<p style=\"color:red\">Erreur: ' + error.message + '</p>';\
+        }\
+    </script>\
+</body>\
+</html>";
+
+    file.close();
+    QMessageBox::information(this, "Exportation de la carte",
+                           "Carte exportée avec succès en HTML.", QMessageBox::Ok);
+
+//oucerture de la carte dans le navigateur
+    QDesktopServices::openUrl(QUrl::fromLocalFile(fileName));
 }
 
 void Notepad::insertImage() {
