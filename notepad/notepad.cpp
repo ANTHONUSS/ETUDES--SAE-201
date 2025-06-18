@@ -208,8 +208,7 @@ void Notepad::redo() {
 }
 
 void Notepad::showAbout() {
-    QMessageBox::about(this, "À propos", "Notepad - Application de traitement de texte simple\n"
-                                         "Créé par ANTHONUS avec l'aide du tuto QT");
+    QMessageBox::about(this, "À propos", "Tèrr’Aventura creator - Application de création de parcours\n");
 }
 
 

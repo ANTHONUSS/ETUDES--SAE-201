@@ -1,0 +1,6 @@
+# Template de configuration utilisateur
+set(USER_NAME "UTILISATEUR_X")
+
+# Chemins spécifiques à l'utilisateur
+set(QT_PATH "/chemin/vers/qt/pour/cet/utilisateur")
+# Autres configurations spécifiques...

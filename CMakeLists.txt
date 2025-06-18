@@ -7,7 +7,14 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 # On rajoute le chemin de Qt, sinon il ne trouve pas les fichiers de configuration
-set(CMAKE_PREFIX_PATH "C:/Qt/6.9.1/mingw_64/lib/cmake")
+if(EXISTS "${CMAKE_SOURCE_DIR}/config.user.cmake")
+    include("${CMAKE_SOURCE_DIR}/config.user.cmake")
+    message(STATUS "Configuration utilisateur chargée pour: ${USER_NAME}")
+    # Ajouter cette ligne pour utiliser QT_PATH comme CMAKE_PREFIX_PATH
+    set(CMAKE_PREFIX_PATH "${QT_PATH}")
+else()
+    message(WARNING "Aucune configuration utilisateur trouvée. Utilisez config.user.cmake.template")
+endif()
 
 find_package(Qt6 COMPONENTS
         Core
