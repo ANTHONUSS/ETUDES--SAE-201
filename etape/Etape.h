@@ -23,11 +23,11 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, const Etape &e);
 
-    QString getTitre() const;
-    float getLatitude() const;
-    float getLongitude() const;
-    QString getDialog() const;
-    int getReponse() const;
+    QString getTitre() const { return titre; }
+    float getLatitude() const { return latitude; }
+    float getLongitude() const { return longitude; }
+    QString getDialog() const { return dialog; }
+    int getReponse() const { return reponse; }
 
 };
 

@@ -48,10 +48,6 @@ void Parcours::addEtape(const QString &titre, float latitude, float longitude, c
 	etapes.push_back(new Etape(titre, latitude, longitude, dialog, reponse));
 }
 
-Etape* Parcours::getEtape(int index) {
-	return (index >= 0 && index < etapes.size()) ? etapes[index] : nullptr;
-}
-
 std::ostream& operator<<(std::ostream& os, const Parcours& p) {
 os << "Parcours: " << p.nom.toStdString()
    << "\n  Ville: " << p.ville.toStdString()

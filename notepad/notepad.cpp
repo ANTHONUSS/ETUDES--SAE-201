@@ -39,6 +39,9 @@ Notepad::Notepad(QWidget *parent)
 
     connect(ui->actionExporter, &QAction::triggered, this, &Notepad::exportPDF);
 
+    connect(ui->numEtape, QOverload<int>::of(&QSpinBox::valueChanged), this, &Notepad::onNumEtapeChanged);
+    connect(ui->spinBox_2, QOverload<int>::of(&QSpinBox::valueChanged), this, &Notepad::onNumParcoursChanged);
+
     std::cout << "\t[+]NotePad" << std::endl;
 }
 
@@ -94,21 +97,6 @@ void Notepad::open() {
 
     addParcours(nom, ville, departement, difficulte, duree, kilometre, imagePath, entete);
 
-    ui->nomParcours->setText(nom);
-    ui->localisationInput->setText(ville);
-    ui->dptInput->setValue(departement);
-    ui->diffuculteInput->setValue(difficulte);
-    ui->dureeInput->setValue(duree);
-    ui->longueurInput->setValue(kilometre);
-    QImage img(imagePath);
-    if (!img.isNull()) {
-        ui->sideImage->setPixmap(QPixmap::fromImage(img));
-        ui->lineEdit->setText(imagePath);
-    } else {
-        ui->sideImage->setText("Image non trouvée");
-        ui->lineEdit->setText(QString());
-    }
-    //TODO: mettre l'entête ailleurs sur le graphique
 
     /* Chargement des étapes */
     Parcours* lastParcours = parcoursList.last();
@@ -120,16 +108,15 @@ void Notepad::open() {
         QString dialog = getDialog(in);
 
         lastParcours->addEtape(titre, 0.0f, 0.0f, dialog, reponse); //TODO: Remplacer 0.0f par les valeurs réelles de latitude et longitude
-
     }
 
-    Etape* firstEtape = lastParcours->getEtape(0);
+    ui->spinBox_2->setMaximum(parcoursList.size());
+    ui->spinBox_2->setValue(parcoursList.size());
+    ui->numEtape->setMaximum(lastParcours->getNombreEtapes());
     ui->numEtape->setValue(1);
-    ui->lineEdit_2->setText(firstEtape->getTitre());
-    ui->doubleSpinBox->setValue(firstEtape->getLatitude());
-    ui->doubleSpinBox_2->setValue(firstEtape->getLongitude());
-    ui->spinBox->setValue(firstEtape->getReponse());
-    ui->textArea->setHtml(firstEtape->getDialog());
+
+    afficherParcours(parcoursList.size() - 1);
+    afficherEtape(0);
 
     setWindowTitle("Notepad : " + fileName);
     file.close();
@@ -145,6 +132,43 @@ QString Notepad::getDialog(QTextStream& in) const {
         content = in.readLine();
     }
     return dialog;
+}
+
+void Notepad::afficherEtape(int index) {
+    Parcours* parcours = parcoursList.at(ui->spinBox_2->value()-1);
+    Etape* etape = parcours->getEtape(index);
+    ui->lineEdit_2->setText(etape->getTitre());
+    ui->doubleSpinBox->setValue(etape->getLatitude());
+    ui->doubleSpinBox_2->setValue(etape->getLongitude());
+    ui->spinBox->setValue(etape->getReponse());
+
+    /*TODO:
+     * Ajouter le fait que les noms des bougs soient lues avec des images avant
+     */
+    QString dialog = etape->getDialog();
+    ui->textArea->setHtml(dialog.toHtmlEscaped().replace("\n", "<br>"));
+}
+
+void Notepad::afficherParcours(int index) {
+    Parcours* parcours = parcoursList.at(index);
+    ui->nomParcours->setText(parcours->getNom());
+    ui->localisationInput->setText(parcours->getVille());
+    ui->dptInput->setValue(parcours->getDepartement());
+    ui->diffuculteInput->setValue(parcours->getDifficulte());
+    ui->dureeInput->setValue(parcours->getDuree());
+    ui->longueurInput->setValue(parcours->getKilometre());
+    QImage img(parcours->getImage());
+    if (!img.isNull()) {
+        ui->sideImage->setPixmap(QPixmap::fromImage(img));
+        ui->lineEdit->setText(parcours->getImage());
+    } else {
+        ui->sideImage->setText("Image non trouvée");
+        ui->lineEdit->setText(QString());
+    }
+    //TODO: mettre l'entête ailleurs sur le graphique
+    ui->numEtape->setValue(1);
+    ui->numEtape->setMaximum(parcours->getNombreEtapes());
+    afficherEtape(0);
 }
 
 void Notepad::save() {
@@ -279,6 +303,20 @@ void Notepad::redo() {
 
 void Notepad::showAbout() {
     QMessageBox::about(this, "À propos", "Tèrr’Aventura creator - Application de création de parcours\n");
+}
+
+void Notepad::onNumEtapeChanged(int value) {
+    //TODO: enregistrer l'étape avant de changer (pour ça faut faire la fonction save avant)
+    if (value < 1 || value > parcoursList.at(ui->spinBox_2->value()-1)->getNombreEtapes())
+        return;
+    afficherEtape(value - 1);
+}
+
+void Notepad::onNumParcoursChanged(int value) {
+    //TODO: enregistrer le parcours avant de changer (pour ça faut faire la fonction save avant)
+    if (value < 1 || value > parcoursList.at(ui->spinBox_2->value()-1)->getNombreEtapes())
+        return;
+    afficherParcours(value - 1);
 }
 
 

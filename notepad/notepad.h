@@ -35,6 +35,9 @@ public:
 
     QString getDialog(QTextStream& in) const;
 
+	void afficherEtape(int index);
+	void afficherParcours(int index);
+
 private slots:
     void newDocument();
     void open();
@@ -56,6 +59,9 @@ private slots:
     void redo();
 
     void showAbout();
+
+	void onNumEtapeChanged(int value);
+	void onNumParcoursChanged(int value);
 };
 
 

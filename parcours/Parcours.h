@@ -25,10 +25,19 @@ public:
     ~Parcours();
 
 	void addEtape(const QString &titre, float latitude, float longitude, const QString &dialog, int reponse);
-	Etape* getEtape(int index);
 
 	friend std::ostream &operator<<(std::ostream &os, const Parcours &p);
 
+	QString getNom() const { return nom; }
+	QString getVille() const { return ville; }
+	unsigned short int getDepartement() const { return departement; }
+	unsigned short int getDifficulte() const { return difficulte; }
+	float getDuree() const { return duree; }
+	float getKilometre() const { return kilometre; }
+	QString getImage() const { return image; }
+	QString getEntete() const { return entete; }
+	int getNombreEtapes() const { return etapes.size(); }
+	Etape* getEtape(int index) { return (index >= 0 && index < etapes.size()) ? etapes[index] : nullptr; }
 };
 
 

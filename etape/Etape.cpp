@@ -31,26 +31,6 @@ Etape::~Etape() {
     std::cout<<"\t[-]etape"<<std::endl;
 }
 
-QString Etape::getTitre() const {
-	return titre;
-}
-
-float Etape::getLatitude() const {
-	return latitude;
-}
-
-float Etape::getLongitude() const {
-	return longitude;
-}
-
-QString Etape::getDialog() const {
-	return dialog;
-}
-
-int Etape::getReponse() const {
-	return reponse;
-}
-
 std::ostream& operator<<(std::ostream& os, const Etape& e) {
 os << "Etape: " << e.titre.toStdString()
    << "\n  Latitude: " << e.latitude
