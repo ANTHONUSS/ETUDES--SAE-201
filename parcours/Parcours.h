@@ -24,7 +24,6 @@ public:
              float kilometre, const QString &image);
 
     void addEtape(const Etape &e);
-    void File(QFile* fichier);
     ~Parcours();
 
 

@@ -23,10 +23,6 @@ void Parcours::addEtape(const Etape &e) {
     etapes.push_back(step);
 }
 
-void Parcours::File(QFile* fichier){
-
-}
-
 
 //desctructeur
 Parcours::~Parcours() {
