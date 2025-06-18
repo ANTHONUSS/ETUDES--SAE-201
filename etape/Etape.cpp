@@ -53,6 +53,15 @@ void Etape::setLongitude(float d, float m, float s) {
 
 
 //méthodes
+QString Etape::getCoordonnee(){
+    int entier=latitude;
+    float degree=entier;
+    float minute=latitude-entier*60;
+    entier=minute;
+    float seconde=minute-entier*60;
+    QString texte=std::to_string(degree)+"°"+std::to_string(minute)+"'"+std::to_string(seconde);
+    return texte;
+}
 
 
 
@@ -62,3 +71,4 @@ void Etape::setLongitude(float d, float m, float s) {
 Etape::~Etape() {
     std::cout<<"[-]etape"<<std::endl;
 }
+

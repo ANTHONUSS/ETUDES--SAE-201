@@ -24,6 +24,8 @@ public:
     void setLatitude(int d, float m, float s);
     void setLongitude(float d, float m, float s);
 
+    QString getCoordonnee();
+
     ~Etape();
 };
 
