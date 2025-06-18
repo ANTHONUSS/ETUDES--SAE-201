@@ -22,5 +22,5 @@ Etape::Etape(const Etape &e)
           reponse(e.reponse) {}
 
 Etape::~Etape() {
-    std::cout<<"[-]etape"<<std::endl;
+    std::cout<<"\t[-]etape"<<std::endl;
 }

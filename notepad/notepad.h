@@ -12,6 +12,7 @@
 #include <QColorDialog>
 #include <QPrinter>
 #include <iostream>
+#include "../parcours/Parcours.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -24,6 +25,11 @@ Q_OBJECT
 public:
     explicit Notepad(QWidget *parent = nullptr);
     ~Notepad() override;
+
+    void addParcours(const QString &nom, const QString &ville, int departement, unsigned int difficulte, float duree,
+             float kilometre, const QString &image, const QString &dialog);
+
+    QString getDialog(QTextStream& in) const;
 
 private slots:
     void newDocument();
@@ -53,6 +59,8 @@ private:
     Ui::Notepad *ui;
 
     QString currentFilePath;
+
+    QVector<Parcours*> parcoursList;
 };
 
 

@@ -6,6 +6,7 @@
 
 #include "notepad.h"
 #include "ui_Notepad.h"
+#include "../parcours/Parcours.h"
 
 
 Notepad::Notepad(QWidget *parent)
@@ -41,6 +42,19 @@ Notepad::Notepad(QWidget *parent)
 
 Notepad::~Notepad() {
     delete ui;
+
+    for (Parcours* parcours : parcoursList) {
+        delete parcours;
+    }
+    parcoursList.clear();
+
+    std::cout << "\t[-]Notepad" << std::endl;
+}
+
+void Notepad::addParcours(const QString& nom, const QString& ville, int departement, unsigned int difficulte,
+    float duree, float kilometre, const QString& image, const QString& entete)
+{
+    parcoursList.push_back(new Parcours(nom, ville, departement, difficulte, duree, kilometre, image, entete));
 }
 
 // On créé un nouveau document
@@ -53,7 +67,7 @@ void Notepad::newDocument() {
 // On ouvre un document
 void Notepad::open() {
     QString fileName = QFileDialog::getOpenFileName(this, "Ouvrir un fichier", "",
-        "Documents texte (*.txt);;Documents HTML (*.html);;Tous les fichiers (*)");
+        "Documents texte (*.txt);;Tous les fichiers (*)");
     if (fileName.isEmpty())
         return;
 
@@ -64,17 +78,44 @@ void Notepad::open() {
         return;
     }
 
-    setWindowTitle("Notepad : " + fileName);
     QTextStream in(&file);
-    QString text = in.readAll();
 
-    if (fileName.endsWith(".txt", Qt::CaseInsensitive)) {
-        ui->textArea->setPlainText(text);
-    } else {
-        ui->textArea->setHtml(text);
+    /* chargement de l'entête */
+    QString nom = in.readLine();
+    QString ville = in.readLine();
+    unsigned short int departement = in.readLine().toInt();
+    unsigned short int difficulte = in.readLine().toInt();
+    float duree = in.readLine().toFloat();
+    float kilometre = in.readLine().toFloat();
+    QString image = in.readLine();
+
+    QString entete;
+    QString content = in.readLine();
+    while (content != "%") {
+        entete += content + "\n"; // nom du boug
+
+        entete += getDialog(in);
+        content = in.readLine();
     }
 
+    addParcours(nom, ville, departement, difficulte, duree, kilometre, image, entete);
+
+    /* Chargement des étapes */
+
+    ui->textArea->setText(entete);
+
+    setWindowTitle("Notepad : " + fileName);
     file.close();
+}
+
+QString Notepad::getDialog(QTextStream& in) const {
+    QString dialogText;
+    QString content = in.readLine();
+    while (content != "#") {
+        dialogText += content + "\n";
+        content = in.readLine();
+    }
+    return dialogText + "\n";
 }
 
 void Notepad::save() {
