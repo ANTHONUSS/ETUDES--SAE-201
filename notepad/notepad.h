@@ -30,6 +30,8 @@ private slots:
     void open();
     void save();
     void saveAs();
+    void exportPDF();
+    void insertImage();
 
     void selectFont();
     void setItalic();
@@ -45,9 +47,7 @@ private slots:
 
     void showAbout();
 
-    void insertImage();
 
-    void exportPDF();
 
 private:
     Ui::Notepad *ui;

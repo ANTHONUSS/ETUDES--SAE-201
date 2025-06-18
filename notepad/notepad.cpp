@@ -52,21 +52,31 @@ void Notepad::newDocument() {
 
 // On ouvre un document
 void Notepad::open() {
-    QString fileName = QFileDialog::getOpenFileName(this, "Ouvrir un fichier", "", "Documents HTML (*.html);;Tous les fichiers (*)");
+    QString fileName = QFileDialog::getOpenFileName(this, "Ouvrir un fichier", "",
+        "Documents texte (*.txt);;Documents HTML (*.html);;Tous les fichiers (*)");
+    if (fileName.isEmpty())
+        return;
+
     QFile file(fileName);
     currentFilePath = fileName;
     if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
         QMessageBox::warning(this, "Warning", "Impossible d'ouvrir le fichier : " + file.errorString());
         return;
     }
+
     setWindowTitle("Notepad : " + fileName);
     QTextStream in(&file);
     QString text = in.readAll();
-    ui->textArea->setHtml(text);
+
+    if (fileName.endsWith(".txt", Qt::CaseInsensitive)) {
+        ui->textArea->setPlainText(text);
+    } else {
+        ui->textArea->setHtml(text);
+    }
+
     file.close();
 }
 
-// On sauvegarde un document
 void Notepad::save() {
     QString filePath;
     if (currentFilePath.isEmpty()) {
@@ -99,6 +109,47 @@ void Notepad::saveAs() {
     QTextStream out(&file);
     out << ui->textArea->toHtml();
     file.close();
+}
+
+void Notepad::exportPDF() {
+    QString fileName = QFileDialog::getSaveFileName(this, "Exporter en PDF",
+                                                  "", "Fichiers PDF (*.pdf)");
+    if (fileName.isEmpty()) return;
+
+    if (!fileName.endsWith(".pdf", Qt::CaseInsensitive))
+        fileName += ".pdf";
+
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setOutputFileName(fileName);
+
+    ui->textArea->document()->print(&printer);
+
+    QMessageBox::information(this, "Exportation PDF",
+                           "Document exporté avec succès en PDF.", QMessageBox::Ok);
+}
+
+void Notepad::insertImage() {
+    QString fileName = QFileDialog::getOpenFileName(this,
+        "Insérer une image", "", "Images (*.png *.jpg *.jpeg *.bmp *.gif)");
+
+    if (!fileName.isEmpty()) {
+        QImage image(fileName);
+        if (image.isNull()) {
+            QMessageBox::warning(this, "Erreur", "Impossible de charger l'image.");
+            return;
+        }
+
+        QTextCursor cursor = ui->textArea->textCursor();
+        QTextDocument *document = ui->textArea->document();
+
+        // Ajouter l'image au document
+        QUrl url = QUrl::fromLocalFile(fileName);
+        document->addResource(QTextDocument::ImageResource, url, QVariant(image));
+
+        // Insérer l'image au curseur actuel
+        cursor.insertImage(fileName);
+    }
 }
 
 
@@ -161,44 +212,4 @@ void Notepad::showAbout() {
                                          "Créé par ANTHONUS avec l'aide du tuto QT");
 }
 
-void Notepad::insertImage() {
-    QString fileName = QFileDialog::getOpenFileName(this,
-        "Insérer une image", "", "Images (*.png *.jpg *.jpeg *.bmp *.gif)");
 
-    if (!fileName.isEmpty()) {
-        QImage image(fileName);
-        if (image.isNull()) {
-            QMessageBox::warning(this, "Erreur", "Impossible de charger l'image.");
-            return;
-        }
-
-        QTextCursor cursor = ui->textArea->textCursor();
-        QTextDocument *document = ui->textArea->document();
-
-        // Ajouter l'image au document
-        QUrl url = QUrl::fromLocalFile(fileName);
-        document->addResource(QTextDocument::ImageResource, url, QVariant(image));
-
-        // Insérer l'image au curseur actuel
-        cursor.insertImage(fileName);
-    }
-}
-
-void Notepad::exportPDF() {
-    QString fileName = QFileDialog::getSaveFileName(this, "Exporter en PDF",
-                                                  "", "Fichiers PDF (*.pdf)");
-    if (fileName.isEmpty()) return;
-
-    if (!fileName.endsWith(".pdf", Qt::CaseInsensitive))
-        fileName += ".pdf";
-
-    QPrinter printer(QPrinter::HighResolution);
-    printer.setOutputFormat(QPrinter::PdfFormat);
-    printer.setOutputFileName(fileName);
-
-    // Utilise le document existant avec toute sa mise en forme
-    ui->textArea->document()->print(&printer);
-
-    QMessageBox::information(this, "Exportation PDF",
-                           "Document exporté avec succès en PDF.", QMessageBox::Ok);
-}
