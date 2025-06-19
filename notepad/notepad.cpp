@@ -103,7 +103,22 @@ void Notepad::open() {
     while (!in.atEnd()) {
         unsigned short int index = in.readLine().toInt();
         QString titre = in.readLine();
-        in.readLine(); //TODO: latitude / longitude
+        QString coords = in.readLine();
+        QStringList parts = coords.split(' ', Qt::SkipEmptyParts);
+
+        QString NS = parts[0];
+        int latD = parts[1].toInt();
+        QStringList latSplit = parts[2].split('.', Qt::SkipEmptyParts);
+        int latM = latSplit[0].toInt();
+        int latS = latSplit[1].toInt();
+        QString WE = parts[3];
+        int lonD = parts[4].toInt();
+        QStringList lonSplit = parts[5].split('.', Qt::SkipEmptyParts);
+        int lonM = lonSplit[0].toInt();
+        int lonS = lonSplit[1].toInt();
+        //TODO: ajouter les coordonnées dans l'étape
+
+
         int reponse = in.readLine().toInt();
         QString dialog = getDialog(in);
 

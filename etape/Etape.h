@@ -19,7 +19,7 @@ public:
     ~Etape();
 
     void setLatitude(int d, float m, QChar NS);
-    void setLongitude(int d, float, QChar EW);
+    void setLongitude(int d, float m, QChar EW);
 
     friend std::ostream &operator<<(std::ostream &os, const Etape &e);
 
