@@ -78,7 +78,6 @@ void Notepad::open() {
         return;
 
     QFile file(fileName);
-    currentFilePath = fileName;
     if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
         QMessageBox::warning(this, "Warning", "Impossible d'ouvrir le fichier : " + file.errorString());
         return;
@@ -191,12 +190,9 @@ void Notepad::afficherParcours(int index) {
 
 void Notepad::save() {
     QString filePath;
-    if (currentFilePath.isEmpty()) {
-        filePath = QFileDialog::getSaveFileName(this, "Sauvegarder le fichier", "", "Documents HTML (*.html)");
-        currentFilePath = filePath;
-    } else {
-        filePath = currentFilePath;
-    }
+
+    //TODO: faire ke chemin d'enregistrement de fichier
+
     QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly | QFile::Text)) {
         QMessageBox::warning(this, "Warning", "Impossible d'enregistrer le fichier : " + file.errorString());
@@ -204,7 +200,27 @@ void Notepad::save() {
     }
     setWindowTitle("Notepad : " + filePath);
     QTextStream out(&file);
-    out << ui->textArea->toHtml();
+
+    Parcours* parcours = parcoursList.at(ui->numParcours->value()-1);
+    out << ui->nomParcours->text() << "\n";
+    out << ui->localisationInput->text() << "\n";
+    out << ui->dptInput->value() << "\n";
+    out << ui->diffuculteInput->value() << "\n";
+    out << ui->dureeInput->value() << "\n";
+    out << ui->longueurInput->value() << "\n";
+    out << ui->imagePath->text() << "\n";
+    out << ui->enteteArea->toPlainText() << "\n";
+    out << "%\n";
+    int cpt = 1;
+    for (Etape* etape : parcours->getEtapes()) {
+        out << cpt++ << "\n";
+        out << etape->getTitre() << "\n";
+        out << etape->getCoordonnee() << "\n";
+        out << etape->getReponse() << "\n";
+        out << etape->getDialog() << "\n"; //TODO: ajouter les # pour les dialogues
+        out << "%\n" << etape->getTitre() << "\n";;
+    }
+
     file.close();
 }
 
