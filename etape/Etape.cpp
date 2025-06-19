@@ -1,7 +1,7 @@
 //
 // Created by p2401552 on 18/06/2025.
 //
-
+#include <cmath>
 #include "Etape.h"
 
 //constructeur
@@ -54,14 +54,34 @@ void Etape::setLongitude(float d, float m, float s) {
 
 //méthodes
 QString Etape::getCoordonnee(){
-    int entier=latitude;
-    float degree=entier;
-    float minute=latitude-entier*60;
-    entier=minute;
-    float seconde=minute-entier*60;
-    QString texte=std::to_string(degree)+"°"+std::to_string(minute)+"'"+std::to_string(seconde);
+    float temp=fabsf(latitude);
+    int degree=temp;
+    int minute=(temp-degree)*60;
+    int seconde=((temp-degree)*60-minute)*60;
+    QString texte =QString::fromStdString(std::to_string(degree)+ "°"+std::to_string(minute)+ "'"+std::to_string(seconde)+ "''") ;
+    if(latitude<0){
+        texte+= "S";
+    }
+    else{
+        texte+="N";
+    }
+    if(longitude<0){
+        texte+= "W";
+    }
+    else{
+        texte+="E";
+    }
+
+    temp=fabsf(longitude);
+    degree=temp;
+    minute=(temp-degree)*60;
+    seconde=((temp-degree)*60-minute)*60;
+    texte +=QString::fromStdString(std::to_string(degree)+ "°"+std::to_string(minute)+ "'"+std::to_string(seconde)+ "''") ;git
+
+
     return texte;
 }
+
 
 
 
