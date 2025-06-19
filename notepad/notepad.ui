@@ -150,14 +150,7 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="1" column="10">
-           <widget class="QDoubleSpinBox" name="LongitudeSpinBox">
-            <property name="minimum">
-             <double>-999.000000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>999.990000000000009</double>
-            </property>
-           </widget>
+           <widget class="QDoubleSpinBox" name="LongitudeSpinBox"/>
           </item>
           <item row="1" column="9">
            <widget class="QLabel" name="longitudeLabel">
@@ -209,7 +202,7 @@
              <double>-999.000000000000000</double>
             </property>
             <property name="maximum">
-             <double>999.990000000000009</double>
+             <double>999.000000000000000</double>
             </property>
            </widget>
           </item>
@@ -222,6 +215,13 @@
           </item>
           <item row="0" column="6" colspan="8">
            <widget class="QLineEdit" name="nomEtape"/>
+          </item>
+          <item row="1" column="14">
+           <widget class="QPushButton" name="supprEtape">
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
