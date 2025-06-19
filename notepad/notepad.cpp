@@ -324,11 +324,13 @@ void Notepad::exportMap() {
     // Ajouter les coordonnées du parcours
     for (int i = 0; i < parcours->getNombreEtapes(); i++) {
         Etape* etape = parcours->getEtape(i);
-        out << "                    [" << etape->getLatitude() << ", " << etape->getLongitude() << "]";
-        if (i < parcours->getNombreEtapes() - 1) {
-            out << ",\n";
-        } else {
-            out << "\n";
+        if (etape->getLatitude()!=0.0f && etape->getLongitude()!=0.0f) {
+            out << "                    [" << etape->getLatitude() << ", " << etape->getLongitude() << "]";
+            if (i < parcours->getNombreEtapes() - 1) {
+                out << ",\n";
+            } else {
+                out << "\n";
+            }
         }
     }
 
@@ -371,9 +373,6 @@ void Notepad::exportMap() {
 
     QMessageBox::information(this, "Exportation de la carte",
                            "Carte exportée avec succès en HTML.", QMessageBox::Ok);
-
-    // Ouverture de la carte dans le navigateur
-    QDesktopServices::openUrl(QUrl::fromLocalFile(fileName));
 }
 
 void Notepad::insertImage() {
