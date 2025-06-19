@@ -273,21 +273,21 @@ void Notepad::exportMap() {
 
     // Version simplifiée HTML avec Leaflet intégré directement
     QTextStream out(&file);
+    // Dans la partie CSS de votre code HTML généré, remplacez :
     out << "<!DOCTYPE html>\n\
 <html>\n\
 <head>\n\
     <meta charset=\"utf-8\">\n\
     <title>Carte du parcours</title>\n\
     <style>\n\
-        html, body { height: 100%; margin: 0; padding: 0; }\n\
-        #map { height: 600px; width: 100%; }\n\
-        .info { padding: 6px 8px; background: white; background: rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; }\n\
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; }\n\
+        #map { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; z-index: 1; }\n\
+        .info { padding: 6px 8px; background: white; background: rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; z-index: 1000; }\n\
         #debug { position: fixed; bottom: 10px; left: 10px; background: white; padding: 10px; z-index: 1000; border: 1px solid red; display: none; }\n\
     </style>\n\
     <link rel=\"stylesheet\" href=\"https://unpkg.com/leaflet@1.9.4/dist/leaflet.css\" />\n\
 </head>\n\
 <body>\n\
-    <h2>Parcours: " + parcours->getNom() + "</h2>\n\
     <div id=\"map\"></div>\n\
     <div id=\"debug\"></div>\n\
     <script src=\"https://unpkg.com/leaflet@1.9.4/dist/leaflet.js\"></script>\n\
