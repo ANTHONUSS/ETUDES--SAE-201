@@ -45,7 +45,6 @@ private slots:
     void newDocument();
     void open();
     void save();
-    void saveAs();
     void exportPDF();
     void insertImage();
     void exportMap();

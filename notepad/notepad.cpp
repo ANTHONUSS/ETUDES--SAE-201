@@ -18,7 +18,6 @@ Notepad::Notepad(QWidget *parent)
     connect(ui->actionNouveau, &QAction::triggered, this, &Notepad::newDocument);
     connect(ui->actionOuvrir, &QAction::triggered, this, &Notepad::open);
     connect(ui->actionEnregistrer, &QAction::triggered, this, &Notepad::save);
-    connect(ui->actionEnregistrer_sous, &QAction::triggered, this, &Notepad::saveAs);
     connect(ui->actionQuitter, &QAction::triggered, this, &QWidget::close);
 
     connect(ui->actionPolice, &QAction::triggered, this, &Notepad::selectFont);
@@ -130,7 +129,7 @@ void Notepad::open() {
     afficherParcours(parcoursList.size() - 1);
     afficherEtape(0);
 
-    setWindowTitle("Notepad : " + fileName);
+    setWindowTitle("Tèrr’Aventura creator : " + fileName);
     file.close();
 }
 
@@ -172,8 +171,7 @@ void Notepad::afficherParcours(int index) {
     QImage img(parcours->getImage());
     if (!img.isNull()) {
         ui->sideImage->setPixmap(QPixmap::fromImage(img));
-        ui->
-        imagePath->setText(parcours->getImage());
+        ui->imagePath->setText(parcours->getImage());
     } else {
         ui->sideImage->setText("Image non trouvée");
         ui->imagePath->setText(QString());
@@ -185,19 +183,24 @@ void Notepad::afficherParcours(int index) {
 }
 
 void Notepad::save() {
-    QString filePath;
+    QString filePath = "data/saves/" + ui->nomParcours->text() + ".txt";
 
-    //TODO: faire ke chemin d'enregistrement de fichier
-
+    QDir dir("data");
+    if (!dir.exists()) {
+        dir.mkpath(".");
+    }
+    QDir dir2("data/saves");
+    if (!dir2.exists()) {
+        dir2.mkpath(".");
+    }
     QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly | QFile::Text)) {
         QMessageBox::warning(this, "Warning", "Impossible d'enregistrer le fichier : " + file.errorString());
         return;
     }
-    setWindowTitle("Notepad : " + filePath);
+    setWindowTitle("Tèrr’Aventura creator : " + filePath);
     QTextStream out(&file);
 
-    Parcours* parcours = parcoursList.at(ui->numParcours->value()-1);
     out << ui->nomParcours->text() << "\n";
     out << ui->localisationInput->text() << "\n";
     out << ui->dptInput->value() << "\n";
@@ -205,33 +208,19 @@ void Notepad::save() {
     out << ui->dureeInput->value() << "\n";
     out << ui->longueurInput->value() << "\n";
     out << ui->imagePath->text() << "\n";
-    out << ui->enteteArea->toPlainText() << "\n";
-    out << "%\n";
+    out << ui->enteteArea->toPlainText() << "%\n";
+
+    Parcours* parcours = parcoursList.at(ui->numParcours->value()-1);
     int cpt = 1;
     for (Etape* etape : parcours->getEtapes()) {
         out << cpt++ << "\n";
         out << etape->getTitre() << "\n";
-        out << etape->getCoordonnee() << "\n";
+        out << etape->getCoordonnee(true) << "\n";
         out << etape->getReponse() << "\n";
-        out << etape->getDialog() << "\n"; //TODO: ajouter les # pour les dialogues
-        out << "%\n" << etape->getTitre() << "\n";;
+        out << etape->getDialog(); //TODO: ajouter les # pour les dialogues
+        out << "%\n";
     }
 
-    file.close();
-}
-
-void Notepad::saveAs() {
-    QString filePath = QFileDialog::getSaveFileName(this, "Enregistrer sous", "", "Documents HTML (*.html)");
-    QFile file(filePath);
-
-    if (!file.open(QIODevice::WriteOnly | QFile::Text)) {
-        QMessageBox::warning(this, "Warning", "Impossible d'enregistrer le fichier : " + file.errorString());
-        return;
-    }
-    currentFilePath = filePath;
-    setWindowTitle("Notepad : " + filePath);
-    QTextStream out(&file);
-    out << ui->textArea->toHtml();
     file.close();
 }
 

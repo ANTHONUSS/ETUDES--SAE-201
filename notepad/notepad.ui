@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>967</width>
-    <height>809</height>
+    <height>924</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -293,7 +293,6 @@
     <addaction name="actionNouveau"/>
     <addaction name="actionOuvrir"/>
     <addaction name="actionEnregistrer"/>
-    <addaction name="actionEnregistrer_sous"/>
     <addaction name="actionExporter"/>
     <addaction name="separator"/>
     <addaction name="actionQuitter"/>
