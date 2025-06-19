@@ -35,13 +35,6 @@ Parcours::Parcours(const Parcours& p)
 }
 
 
-//méthodes
-void Parcours::addEtape(const Etape &e) {
-    Etape* step=new Etape(e.getTitre(), e.getLatitude() ,e.getLongitude(), e.getTexte(), e.getReponse());
-    etapes.push_back(step);
-}
-
-
 //desctructeur
 Parcours::~Parcours() {
 	for (Etape* e : etapes) {
