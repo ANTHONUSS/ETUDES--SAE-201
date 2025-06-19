@@ -2,41 +2,55 @@
 #include "Etape.h"
 
 //constructeur
-Etape::Etape(const QString &titre, float latitude, float longitude, const QString &dialog, int reponse)
+Etape::Etape(const QString &titre, const QString &dialog, int reponse,
+        int latD, int latM, int latS, QString NS,
+        int lonD, int lonM, int lonS, QString WE)
         : titre(titre),
-          latitude(latitude),
-          longitude(longitude),
           dialog(dialog),
-          reponse(reponse) {}
+          reponse(reponse)
+{
+    setLatitude(latD, latM, latS, NS);
+    setLongitude(lonD, lonM, lonS, WE);
 
-Etape::Etape() {}
+    std::cout << "\t[+]Etape" << std::endl;
+}
+
+Etape::Etape() {
+    std::cout << "\t[+]Etape" << std::endl;
+}
 
 Etape::Etape(const Etape &e)
         : titre(e.titre),
           latitude(e.latitude),
           longitude(e.longitude),
           dialog(e.dialog),
-          reponse(e.reponse) {}
+          reponse(e.reponse)
+{
+    std::cout << "\t[+C]Etape" << std::endl;
+}
 
 //desctructeur
 Etape::~Etape() {
-    std::cout<<"[-]etape"<<std::endl;
+    std::cout<<"\t[-]Etape"<<std::endl;
 }
-void Etape::setLatitude(int d, int m, int s, QChar NS) {
-    if(NS=='N'){
+
+void Etape::setLatitude(int d, int m, int s, QString NS) {
+    if(NS=="N"){
         latitude = d+(m/60.0)+(s/3600.0);
     }
-    if(NS=='S'){
+    if(NS=="S"){
         latitude = (d+(m/60.0)+(s/3600.0))*-1;
     }
+    std::cout << "Latitude set to: " << latitude << std::endl;
 }
-void Etape::setLongitude(int d, int m, int s, QChar WE) {
-    if(WE=='E'){
+void Etape::setLongitude(int d, int m, int s, QString WE) {
+    if(WE=="E"){
         longitude = d+(m/60.0)+(s/3600.0);
     }
-    if(WE=='W'){
+    if(WE=="W"){
         longitude = (d+(m/60.0)+(s/3600.0))*-1;
     }
+    std::cout << "Longitude set to: " << longitude << std::endl;
 }
 
 //méthodes

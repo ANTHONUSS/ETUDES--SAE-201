@@ -104,11 +104,27 @@ void Notepad::open() {
     while (!in.atEnd()) {
         unsigned short int index = in.readLine().toInt();
         QString titre = in.readLine();
-        in.readLine(); //TODO: latitude / longitude
+        QString coords = in.readLine();
+        QStringList parts = coords.split(' ', Qt::SkipEmptyParts);
+
+        QString NS = parts[0];
+        int latD = parts[1].toInt();
+        QStringList latSplit = parts[2].split('.', Qt::SkipEmptyParts);
+        int latM = latSplit[0].toInt();
+        int latS = latSplit[1].toInt();
+        QString WE = parts[3];
+        int lonD = parts[4].toInt();
+        QStringList lonSplit = parts[5].split('.', Qt::SkipEmptyParts);
+        int lonM = lonSplit[0].toInt();
+        int lonS = lonSplit[1].toInt();
+
+
         int reponse = in.readLine().toInt();
         QString dialog = getDialog(in);
 
-        lastParcours->addEtape(titre, 0.0f, 0.0f, dialog, reponse); //TODO: Remplacer 0.0f par les valeurs réelles de latitude et longitude
+        lastParcours->addEtape(titre, dialog, reponse,
+            latD, latM, latS, NS,
+            lonD, lonM, lonS, WE);
     }
 
     ui->numParcours->setMaximum(parcoursList.size());
@@ -167,7 +183,7 @@ void Notepad::afficherParcours(int index) {
         ui->sideImage->setText("Image non trouvée");
         ui->imagePath->setText(QString());
     }
-    //TODO: mettre l'entête ailleurs sur le graphique
+    ui->enteteArea->setText(parcours->getEntete());
     ui->numEtape->setValue(1);
     ui->numEtape->setMaximum(parcours->getNombreEtapes());
     afficherEtape(0);
