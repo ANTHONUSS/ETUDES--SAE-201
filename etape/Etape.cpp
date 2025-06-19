@@ -53,7 +53,7 @@ void Etape::setLongitude(int d, float m, QString WE) {
 }
 
 //méthodes
-QString Etape::getCoordonnee() {
+QString Etape::getCoordonnee(bool toFichier) {
 	QChar hemiLat = (latitude < 0) ? 'S' : 'N';
 	QChar hemiLon = (longitude < 0) ? 'W' : 'E';
 
@@ -66,16 +66,35 @@ QString Etape::getCoordonnee() {
 	double minLat = (absLat - degLat) * 60.0;
 	double minLon = (absLon - degLon) * 60.0;
 
-	QString strLat = QString("%1%2°%3'")
-	                 .arg(hemiLat)
-	                 .arg(degLat, 2, 10, QChar('0')) //ptite explication : on met degLat à la place de %2, de taille de 2 minimum, on remplace par le "char 0" à la fin si jamais notre degLat est inférieur à 10, et c'est en base 10
-	                 .arg(QString::number(minLat, 'f', 3));
-	QString strLon = QString("%1%2°%3'")
-					 .arg(hemiLon)
-					 .arg(degLon, 2, 10, QChar('0'))
-					 .arg(QString::number(minLon, 'f', 3));
+	QString texte;
 
-	return QString("%1 / %2").arg(strLat, strLon);
+	if (toFichier) {
+		QString strLat = QString("%1 %2 %3")
+							 .arg(hemiLat)
+							 .arg(degLat)
+							 .arg(QString::number(minLat, 'f', 3));
+		QString strLon = QString("%1 %2 %3")
+						 .arg(hemiLon)
+						 .arg(degLon)
+						 .arg(QString::number(minLon, 'f', 3));
+
+		texte = QString("%1 %2").arg(strLat, strLon);
+
+	} else {
+		QString strLat = QString("%1%2°%3'")
+						 .arg(hemiLat)
+						 .arg(degLat, 3, 10, QChar('0')) //ptite explication : on met degLat à la place de %2, de taille de 3 minimum, on remplace par le "char 0" à la fin si jamais notre degLat est inférieur à 10, et c'est en base 10
+						 .arg(QString::number(minLat, 'f', 3));
+		QString strLon = QString("%1%2°%3'")
+						 .arg(hemiLon)
+						 .arg(degLon, 3, 10, QChar('0'))
+						 .arg(QString::number(minLon, 'f', 3));
+
+		texte = QString("%1%2").arg(strLat, strLon);
+
+	}
+
+	return texte;
 }
 
 std::ostream& operator<<(std::ostream& os, const Etape& e) {

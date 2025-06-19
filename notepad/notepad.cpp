@@ -123,8 +123,6 @@ void Notepad::open() {
             lonD, lonM, WE);
     }
 
-    std::cout << lastParcours->getEtape(0)->getCoordonnee().toStdString() << std::endl;
-
     ui->numParcours->setMaximum(parcoursList.size());
     ui->numParcours->setValue(parcoursList.size());
     ui->numEtape->setMaximum(lastParcours->getNombreEtapes());

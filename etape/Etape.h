@@ -23,7 +23,7 @@ public:
     void setLatitude(int d, float m, QString NS);
     void setLongitude(int d, float m, QString WE);
 
-    QString getCoordonnee();
+    QString getCoordonnee(bool toFichier = false);
 
     friend std::ostream &operator<<(std::ostream &os, const Etape &e);
 
