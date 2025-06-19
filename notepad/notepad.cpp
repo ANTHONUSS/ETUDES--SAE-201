@@ -45,6 +45,7 @@ Notepad::Notepad(QWidget *parent)
     std::cout << "\t[+]NotePad" << std::endl;
     connect(ui->exportMap, &QPushButton::clicked, this, &Notepad::exportMap);
     connect(ui->supprEtape, &QPushButton::clicked, this, Notepad::supprEtape );
+    connect(ui->ajouterEtape, &QPushButton::clicked, this, &Notepad::ajouterEtape);
 }
 
 Notepad::~Notepad() {
@@ -524,5 +525,19 @@ void Notepad::onNumParcoursChanged(int value) {
         return;
     afficherParcours(value - 1);
 }
+
+void Notepad::ajouterEtape() {
+    if (parcoursList.size()==0) {
+        QMessageBox::warning(this, "Erreur", "Aucun parcours disponible pour ajouter une étape.");
+        return;
+    }
+    //ajout d'une étape sur le parcours courant et champs vides
+    Parcours* parcours = parcoursList.at(ui->numParcours->value()-1);
+    parcours->addEtape("", "", 0, 0, 0.0f, "N", 0, 0.0f, "E");
+    ui->numEtape->setMaximum(parcours->getNombreEtapes());
+    ui->numEtape->setValue(parcours->getNombreEtapes());
+    afficherEtape(parcours->getNombreEtapes() - 1);
+}
+
 
 

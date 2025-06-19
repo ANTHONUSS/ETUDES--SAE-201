@@ -67,6 +67,7 @@ private slots:
 	void onNumEtapeChanged(int value);
 	void onNumParcoursChanged(int value);
 	void supprEtape();
+	void ajouterEtape();
 };
 
 
