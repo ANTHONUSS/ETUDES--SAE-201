@@ -1,4 +1,5 @@
 #include <QVector>
+#include <QFile>
 #include "../etape/Etape.h"
 
 #ifndef SAE201_PARCOURS_H
@@ -23,6 +24,7 @@ public:
              float kilometre, const QString &image, const QString &entete);
 	Parcours(const Parcours &p);
     ~Parcours();
+
 
 	void addEtape(const QString &titre, float latitude, float longitude, const QString &dialog, int reponse);
 

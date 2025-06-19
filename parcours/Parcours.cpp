@@ -34,6 +34,8 @@ Parcours::Parcours(const Parcours& p)
 	std::cout << "\t[+C]parcours" << std::endl;
 }
 
+
+//desctructeur
 Parcours::~Parcours() {
 	for (Etape* e : etapes) {
 		delete e;

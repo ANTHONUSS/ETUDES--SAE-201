@@ -21,13 +21,17 @@ public:
     void setLatitude(int d, float m, QChar NS);
     void setLongitude(int d, float m, QChar EW);
 
+    QString getCoordonnee();
+
     friend std::ostream &operator<<(std::ostream &os, const Etape &e);
 
     QString getTitre() const { return titre; }
     float getLatitude() const { return latitude; }
     float getLongitude() const { return longitude; }
     QString getDialog() const { return dialog; }
+
     int getReponse() const { return reponse; }
+
 
 };
 

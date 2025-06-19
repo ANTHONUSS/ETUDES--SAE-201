@@ -7,12 +7,15 @@
 
 #include <QMainWindow>
 #include <QFileDialog>
+#include<QDesktopServices>
 #include <QMessageBox>
 #include <QFontDialog>
 #include <QColorDialog>
 #include <QPrinter>
 #include <iostream>
 #include "../parcours/Parcours.h"
+
+#include "../etape/Etape.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -45,6 +48,7 @@ private slots:
     void saveAs();
     void exportPDF();
     void insertImage();
+    void exportMap();
 
     void selectFont();
     void setItalic();

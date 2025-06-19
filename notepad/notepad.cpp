@@ -40,9 +40,10 @@ Notepad::Notepad(QWidget *parent)
     connect(ui->actionExporter, &QAction::triggered, this, &Notepad::exportPDF);
 
     connect(ui->numEtape, QOverload<int>::of(&QSpinBox::valueChanged), this, &Notepad::onNumEtapeChanged);
-    connect(ui->spinBox_2, QOverload<int>::of(&QSpinBox::valueChanged), this, &Notepad::onNumParcoursChanged);
+    connect(ui->numParcours, QOverload<int>::of(&QSpinBox::valueChanged), this, &Notepad::onNumParcoursChanged);
 
     std::cout << "\t[+]NotePad" << std::endl;
+    connect(ui->exportMap, &QPushButton::clicked, this, &Notepad::exportMap);
 }
 
 Notepad::~Notepad() {
@@ -125,8 +126,8 @@ void Notepad::open() {
         lastParcours->addEtape(titre, 0.0f, 0.0f, dialog, reponse); //TODO: Remplacer 0.0f par les valeurs réelles de latitude et longitude
     }
 
-    ui->spinBox_2->setMaximum(parcoursList.size());
-    ui->spinBox_2->setValue(parcoursList.size());
+    ui->numParcours->setMaximum(parcoursList.size());
+    ui->numParcours->setValue(parcoursList.size());
     ui->numEtape->setMaximum(lastParcours->getNombreEtapes());
     ui->numEtape->setValue(1);
 
@@ -150,11 +151,11 @@ QString Notepad::getDialog(QTextStream& in) const {
 }
 
 void Notepad::afficherEtape(int index) {
-    Parcours* parcours = parcoursList.at(ui->spinBox_2->value()-1);
+    Parcours* parcours = parcoursList.at(ui->numParcours->value()-1);
     Etape* etape = parcours->getEtape(index);
-    ui->lineEdit_2->setText(etape->getTitre());
-    ui->doubleSpinBox->setValue(etape->getLatitude());
-    ui->doubleSpinBox_2->setValue(etape->getLongitude());
+    ui->nomEtape->setText(etape->getTitre());
+    ui->latitudeSpinBox->setValue(etape->getLatitude());
+    ui->LongitudeSpinBox->setValue(etape->getLongitude());
     ui->spinBox->setValue(etape->getReponse());
 
     /*TODO:
@@ -175,10 +176,11 @@ void Notepad::afficherParcours(int index) {
     QImage img(parcours->getImage());
     if (!img.isNull()) {
         ui->sideImage->setPixmap(QPixmap::fromImage(img));
-        ui->lineEdit->setText(parcours->getImage());
+        ui->
+        imagePath->setText(parcours->getImage());
     } else {
         ui->sideImage->setText("Image non trouvée");
-        ui->lineEdit->setText(QString());
+        ui->imagePath->setText(QString());
     }
     //TODO: mettre l'entête ailleurs sur le graphique
     ui->numEtape->setValue(1);
@@ -236,6 +238,157 @@ void Notepad::exportPDF() {
 
     QMessageBox::information(this, "Exportation PDF",
                            "Document exporté avec succès en PDF.", QMessageBox::Ok);
+}
+
+void Notepad::exportMap() {
+    // Vérifier si des parcours sont disponibles
+    if (parcoursList.isEmpty()) {
+        QMessageBox::warning(this, "Erreur", "Aucun parcours disponible pour l'exportation.");
+        return;
+    }
+
+    // Récupérer le parcours actuellement sélectionné
+    int parcoursIndex = ui->numParcours->value() - 1;
+    if (parcoursIndex < 0 || parcoursIndex >= parcoursList.size()) {
+        QMessageBox::warning(this, "Erreur", "Index de parcours invalide.");
+        return;
+    }
+
+    Parcours* parcours = parcoursList.at(parcoursIndex);
+
+    // Exporter la map en HTML
+    QString fileName = QFileDialog::getSaveFileName(this, "Exporter la carte", "", "Fichiers HTML (*.html)");
+    if (fileName.isEmpty()) return;
+
+    if (!fileName.endsWith(".html", Qt::CaseInsensitive))
+        fileName += ".html";
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QFile::Text)) {
+        QMessageBox::warning(this, "Erreur", "Impossible d'exporter la carte : " + file.errorString());
+        return;
+    }
+
+    // Version simplifiée HTML avec Leaflet intégré directement
+    QTextStream out(&file);
+    out << "<!DOCTYPE html>\n\
+<html>\n\
+<head>\n\
+    <meta charset=\"utf-8\">\n\
+    <title>Carte du parcours</title>\n\
+    <style>\n\
+        html, body { height: 100%; margin: 0; padding: 0; }\n\
+        #map { height: 600px; width: 100%; }\n\
+        .info { padding: 6px 8px; background: white; background: rgba(255,255,255,0.8); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; }\n\
+        #debug { position: fixed; bottom: 10px; left: 10px; background: white; padding: 10px; z-index: 1000; border: 1px solid red; display: none; }\n\
+    </style>\n\
+    <link rel=\"stylesheet\" href=\"https://unpkg.com/leaflet@1.9.4/dist/leaflet.css\" />\n\
+</head>\n\
+<body>\n\
+    <h2>Parcours: " + parcours->getNom() + "</h2>\n\
+    <div id=\"map\"></div>\n\
+    <div id=\"debug\"></div>\n\
+    <script src=\"https://unpkg.com/leaflet@1.9.4/dist/leaflet.js\"></script>\n\
+    <script>\n\
+        // Fonction de débogage\n\
+        function debug(msg) {\n\
+            var debugElement = document.getElementById('debug');\n\
+            debugElement.style.display = 'block';\n\
+            debugElement.innerHTML += msg + '<br>';\n\
+            console.log(msg);\n\
+        }\n\
+\n\
+        // Attendre que tout soit chargé\n\
+        window.onload = function() {\n\
+            debug('Page chargée');\n\
+\n\
+            // Vérifier que Leaflet est chargé\n\
+            if (typeof L === 'undefined') {\n\
+                debug('ERREUR: Leaflet n\\'est pas chargé');\n\
+                return;\n\
+            }\n\
+\n\
+            debug('Leaflet trouvé, initialisation de la carte...');\n\
+\n\
+            try {\n\
+                // Création de la carte\n\
+                var map = L.map('map').setView([43.6045, 1.4442], 13);\n\
+                debug('Carte créée');\n\
+\n\
+                // Fonds de carte\n\
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {\n\
+                    attribution: '&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors'\n\
+                }).addTo(map);\n\
+                debug('Fond de carte ajouté');\n\
+\n\
+                // Points d'intérêt\n";
+
+    // Ajouter les marqueurs d'étapes manuellement
+    for (int i = 0; i < parcours->getNombreEtapes(); i++) {
+        Etape* etape = parcours->getEtape(i);
+        out << "                L.marker([" << etape->getLatitude() << ", " << etape->getLongitude() << "]).addTo(map)\n\
+                    .bindPopup(\"" << etape->getTitre() << "\");\n\
+                debug('Marqueur " << i+1 << " ajouté');\n";
+    }
+
+    // Continuer avec le tracé du parcours
+    out << "\n\
+                // Tracé du parcours\n\
+                var pathCoords = [\n";
+
+    // Ajouter les coordonnées du parcours
+    for (int i = 0; i < parcours->getNombreEtapes(); i++) {
+        Etape* etape = parcours->getEtape(i);
+        out << "                    [" << etape->getLatitude() << ", " << etape->getLongitude() << "]";
+        if (i < parcours->getNombreEtapes() - 1) {
+            out << ",\n";
+        } else {
+            out << "\n";
+        }
+    }
+
+    out << "                ];\n\
+                var path = L.polyline(pathCoords, {color: 'blue', weight: 4}).addTo(map);\n\
+                debug('Tracé du parcours ajouté');\n\
+\n\
+                // Ajuster la vue pour voir tout le parcours\n\
+                map.fitBounds(path.getBounds());\n\
+                debug('Zoom ajusté');\n\
+\n\
+                // Afficher info\n\
+                var info = L.control({position: 'topleft'});\n\
+                info.onAdd = function() {\n\
+                    var div = L.DomUtil.create('div', 'info');\n\
+                    div.innerHTML = '<h4>" + parcours->getNom() + "</h4>' +\n\
+                        'Ville: " + parcours->getVille() + "<br>' +\n\
+                        'Difficulté: " + QString::number(parcours->getDifficulte()) + "/5<br>' +\n\
+                        'Durée: " + QString::number(parcours->getDuree()) + " h<br>' +\n\
+                        'Distance: " + QString::number(parcours->getKilometre()) + " km';\n\
+                    return div;\n\
+                };\n\
+                info.addTo(map);\n\
+                debug('Informations du parcours ajoutées');\n\
+                \n\
+                // Tout s'est bien passé, cacher le débogage\n\
+                setTimeout(function() {\n\
+                    document.getElementById('debug').style.display = 'none';\n\
+                }, 3000);\n\
+                \n\
+            } catch(e) {\n\
+                debug('ERREUR: ' + e.message);\n\
+            }\n\
+        };\n\
+    </script>\n\
+</body>\n\
+</html>";
+
+    file.close();
+
+    QMessageBox::information(this, "Exportation de la carte",
+                           "Carte exportée avec succès en HTML.", QMessageBox::Ok);
+
+    // Ouverture de la carte dans le navigateur
+    QDesktopServices::openUrl(QUrl::fromLocalFile(fileName));
 }
 
 void Notepad::insertImage() {
@@ -322,14 +475,14 @@ void Notepad::showAbout() {
 
 void Notepad::onNumEtapeChanged(int value) {
     //TODO: enregistrer l'étape avant de changer (pour ça faut faire la fonction save avant)
-    if (value < 1 || value > parcoursList.at(ui->spinBox_2->value()-1)->getNombreEtapes())
+    if (value < 1 || value > parcoursList.at(ui->numParcours->value()-1)->getNombreEtapes())
         return;
     afficherEtape(value - 1);
 }
 
 void Notepad::onNumParcoursChanged(int value) {
     //TODO: enregistrer le parcours avant de changer (pour ça faut faire la fonction save avant)
-    if (value < 1 || value > parcoursList.at(ui->spinBox_2->value()-1)->getNombreEtapes())
+    if (value < 1 || value > parcoursList.at(ui->numParcours->value()-1)->getNombreEtapes())
         return;
     afficherParcours(value - 1);
 }
