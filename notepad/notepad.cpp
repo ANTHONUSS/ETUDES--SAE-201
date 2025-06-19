@@ -183,7 +183,7 @@ void Notepad::afficherParcours(int index) {
         ui->sideImage->setText("Image non trouvée");
         ui->imagePath->setText(QString());
     }
-    //TODO: mettre l'entête ailleurs sur le graphique
+    ui->enteteArea->setText(parcours->getEntete());
     ui->numEtape->setValue(1);
     ui->numEtape->setMaximum(parcours->getNombreEtapes());
     afficherEtape(0);
