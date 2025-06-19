@@ -44,27 +44,41 @@ int Etape::getReponse() const {
 }
 
 
-void Etape::setLatitude(int d, float m, float s) {
-    latitude = d+(m/60)+(s/3600);
+void Etape::setLatitude(int d, int m, int s, QChar NS) {
+    if(NS=='N'){
+        latitude = d+(m/60.0)+(s/3600.0);
+    }
+    if(NS=='S'){
+        latitude = (d+(m/60.0)+(s/3600.0))*-1;
+    }
 }
-void Etape::setLongitude(float d, float m, float s) {
-    longitude = d+(m/60)+(s/3600);
+void Etape::setLongitude(int d, int m, int s, QChar WE) {
+    if(WE=='E'){
+        longitude = d+(m/60.0)+(s/3600.0);
+    }
+    if(WE=='W'){
+        longitude = (d+(m/60.0)+(s/3600.0))*-1;
+    }
 }
 
 
 //méthodes
 QString Etape::getCoordonnee(){
+    QString texte;
     float temp=fabsf(latitude);
     int degree=temp;
     int minute=(temp-degree)*60;
     int seconde=((temp-degree)*60-minute)*60;
-    QString texte =QString::fromStdString(std::to_string(degree)+ "°"+std::to_string(minute)+ "'"+std::to_string(seconde)+ "''") ;
+
     if(latitude<0){
         texte+= "S";
     }
     else{
         texte+="N";
     }
+    texte +=QString::fromStdString(std::to_string(degree)+ "°"+std::to_string(minute)+ "."+std::to_string(seconde)+ "'") ;
+    texte+="/";
+
     if(longitude<0){
         texte+= "W";
     }
@@ -76,7 +90,7 @@ QString Etape::getCoordonnee(){
     degree=temp;
     minute=(temp-degree)*60;
     seconde=((temp-degree)*60-minute)*60;
-    texte +=QString::fromStdString(std::to_string(degree)+ "°"+std::to_string(minute)+ "'"+std::to_string(seconde)+ "''") ;git
+    texte +=QString::fromStdString(std::to_string(degree)+ "°"+std::to_string(minute)+ "."+std::to_string(seconde)+ "'");
 
 
     return texte;

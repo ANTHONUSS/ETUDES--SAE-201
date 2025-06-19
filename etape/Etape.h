@@ -21,8 +21,8 @@ public:
     float getLongitude() const;
     const QString &getTexte() const;
     int getReponse() const;
-    void setLatitude(int d, float m, float s);
-    void setLongitude(float d, float m, float s);
+    void setLatitude(int d, int m, int s, QChar NS);
+    void setLongitude(int d, int m, int s, QChar WE);
 
     QString getCoordonnee();
 
