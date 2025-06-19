@@ -323,9 +323,11 @@ void Notepad::exportMap() {
     // Ajouter les marqueurs d'étapes manuellement
     for (int i = 0; i < parcours->getNombreEtapes(); i++) {
         Etape* etape = parcours->getEtape(i);
-        out << "                L.marker([" << etape->getLatitude() << ", " << etape->getLongitude() << "]).addTo(map)\n\
+        if (etape->getLatitude()!=0.0f && etape->getLongitude()!=0.0f) {
+            out << "                L.marker([" << etape->getLatitude() << ", " << etape->getLongitude() << "]).addTo(map)\n\
                     .bindPopup(\"" << etape->getTitre() << "\");\n\
                 debug('Marqueur " << i+1 << " ajouté');\n";
+        }
     }
 
     // Continuer avec le tracé du parcours
