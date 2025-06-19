@@ -97,9 +97,6 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="1" colspan="5">
-           <widget class="QLineEdit" name="localisationInput"/>
-          </item>
           <item row="6" column="5">
            <widget class="QPushButton" name="imageSelectionButton">
             <property name="text">
@@ -128,7 +125,11 @@
            </widget>
           </item>
           <item row="0" column="1" colspan="6">
-           <widget class="QLineEdit" name="nomParcours"/>
+           <widget class="QLineEdit" name="nomParcours">
+            <property name="placeholderText">
+             <string>Nom du Parcours</string>
+            </property>
+           </widget>
           </item>
           <item row="0" column="7" rowspan="5">
            <widget class="QLabel" name="sideImage">
@@ -138,7 +139,21 @@
            </widget>
           </item>
           <item row="8" column="0" colspan="8">
-           <widget class="QTextEdit" name="enteteArea"/>
+           <widget class="QTextEdit" name="enteteArea">
+            <property name="placeholderText">
+             <string>Contenu du contexte du parcours</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1" colspan="4">
+           <widget class="QLineEdit" name="localisationInput"/>
+          </item>
+          <item row="3" column="5">
+           <widget class="QLabel" name="departemenLabel">
+            <property name="text">
+             <string>Département</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -167,7 +182,7 @@
            </widget>
           </item>
           <item row="1" column="13">
-           <widget class="QSpinBox" name="spinBox">
+           <widget class="QSpinBox" name="reponse">
             <property name="minimum">
              <number>-1</number>
             </property>
@@ -177,7 +192,11 @@
            </widget>
           </item>
           <item row="2" column="5" colspan="10">
-           <widget class="QTextEdit" name="textArea"/>
+           <widget class="QTextEdit" name="textArea">
+            <property name="placeholderText">
+             <string>Contenu de l'étape</string>
+            </property>
+           </widget>
           </item>
           <item row="1" column="12">
            <widget class="QLabel" name="reponseLabel">
@@ -214,7 +233,11 @@
            </widget>
           </item>
           <item row="0" column="6" colspan="8">
-           <widget class="QLineEdit" name="nomEtape"/>
+           <widget class="QLineEdit" name="nomEtape">
+            <property name="placeholderText">
+             <string>Nom de l'étape</string>
+            </property>
+           </widget>
           </item>
           <item row="1" column="14">
            <widget class="QPushButton" name="supprEtape">
@@ -235,7 +258,7 @@
           <item row="0" column="0">
            <widget class="QPushButton" name="exportMap">
             <property name="text">
-             <string>Export Map</string>
+             <string>Exporter Map</string>
             </property>
            </widget>
           </item>

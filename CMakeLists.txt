@@ -33,7 +33,8 @@ add_executable(SAE201 main.cpp
         parcours/Parcours.cpp
         parcours/Parcours.h
         etape/Etape.cpp
-        etape/Etape.h)
+        etape/Etape.h
+)
 target_link_libraries(SAE201
         Qt::Core
         Qt::Gui

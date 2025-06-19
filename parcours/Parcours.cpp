@@ -69,3 +69,7 @@ for (Etape* e : p.etapes) {
 }
 	return os;
 }
+
+void Parcours::supprimerEtape(int index) {
+	etapes.remove(index);
+}

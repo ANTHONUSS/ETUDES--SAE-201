@@ -42,6 +42,7 @@ public:
 	QString getEntete() const { return entete; }
 	int getNombreEtapes() const { return etapes.size(); }
 	Etape* getEtape(int index) { return (index >= 0 && index < etapes.size()) ? etapes[index] : nullptr; }
+	void supprimerEtape(int index);
 };
 
 
