@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>967</width>
-    <height>681</height>
+    <height>809</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -32,28 +32,38 @@
          <property name="title">
           <string/>
          </property>
+         <property name="checkable">
+          <bool>false</bool>
+         </property>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="3" column="6">
-           <widget class="QSpinBox" name="dptInput">
+          <item row="0" column="0">
+           <widget class="QSpinBox" name="numParcours">
             <property name="minimum">
              <number>1</number>
             </property>
             <property name="maximum">
-             <number>99</number>
+             <number>1</number>
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="DifficulteLabel">
+          <item row="4" column="4">
+           <widget class="QLabel" name="longueurLabel">
             <property name="text">
-             <string>Difficulté</string>
+             <string>Longueur</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="7" rowspan="4">
-           <widget class="QLabel" name="sideImage">
+          <item row="4" column="2">
+           <widget class="QLabel" name="dureeLabel">
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/Personnages/personnages-parcours/zecolo.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>Durée</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="6">
+           <widget class="QPushButton" name="supprimerBouton">
+            <property name="text">
+             <string>Supprimer parcours</string>
             </property>
            </widget>
           </item>
@@ -67,48 +77,8 @@
             </property>
            </widget>
           </item>
-          <item row="6" column="3">
-           <widget class="QPushButton" name="pushButton">
-            <property name="text">
-             <string>PushButton</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Image</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1" colspan="5">
-           <widget class="QLineEdit" name="localisationInput"/>
-          </item>
-          <item row="4" column="2">
-           <widget class="QLabel" name="dureeLabel">
-            <property name="text">
-             <string>Durée</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1" colspan="2">
-           <widget class="QLineEdit" name="lineEdit"/>
-          </item>
           <item row="4" column="5">
            <widget class="QDoubleSpinBox" name="longueurInput"/>
-          </item>
-          <item row="0" column="1" colspan="6">
-           <widget class="QLineEdit" name="nomParcours"/>
-          </item>
-          <item row="4" column="4">
-           <widget class="QLabel" name="longueurLabel">
-            <property name="text">
-             <string>Longueur</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="3">
-           <widget class="QDoubleSpinBox" name="dureeInput"/>
           </item>
           <item row="3" column="0">
            <widget class="QLabel" name="localisationLabel">
@@ -117,15 +87,58 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="0">
-           <widget class="QSpinBox" name="spinBox_2">
+          <item row="3" column="6">
+           <widget class="QSpinBox" name="dptInput">
             <property name="minimum">
              <number>1</number>
             </property>
             <property name="maximum">
-             <number>1</number>
+             <number>99</number>
             </property>
            </widget>
+          </item>
+          <item row="3" column="1" colspan="5">
+           <widget class="QLineEdit" name="localisationInput"/>
+          </item>
+          <item row="6" column="5">
+           <widget class="QPushButton" name="imageSelectionButton">
+            <property name="text">
+             <string>Selectionner image</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="3">
+           <widget class="QDoubleSpinBox" name="dureeInput"/>
+          </item>
+          <item row="6" column="1" colspan="4">
+           <widget class="QLineEdit" name="imagePath"/>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="imageLabel">
+            <property name="text">
+             <string>Image</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="DifficulteLabel">
+            <property name="text">
+             <string>Difficulté</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" colspan="6">
+           <widget class="QLineEdit" name="nomParcours"/>
+          </item>
+          <item row="0" column="7" rowspan="5">
+           <widget class="QLabel" name="sideImage">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/Personnages/personnages-parcours/zecolo.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="0" colspan="8">
+           <widget class="QTextEdit" name="enteteArea"/>
           </item>
          </layout>
         </widget>
@@ -137,17 +150,17 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="1" column="10">
-           <widget class="QDoubleSpinBox" name="doubleSpinBox_2"/>
+           <widget class="QDoubleSpinBox" name="LongitudeSpinBox"/>
           </item>
           <item row="1" column="9">
-           <widget class="QLabel" name="label_5">
+           <widget class="QLabel" name="longitudeLabel">
             <property name="text">
              <string>Longitude</string>
             </property>
            </widget>
           </item>
           <item row="1" column="7">
-           <widget class="QLabel" name="label_2">
+           <widget class="QLabel" name="latitudeLabel">
             <property name="text">
              <string>Latitude</string>
             </property>
@@ -167,7 +180,7 @@
            <widget class="QTextEdit" name="textArea"/>
           </item>
           <item row="1" column="12">
-           <widget class="QLabel" name="label_4">
+           <widget class="QLabel" name="reponseLabel">
             <property name="text">
              <string>Réponse</string>
             </property>
@@ -184,17 +197,17 @@
            </widget>
           </item>
           <item row="1" column="8">
-           <widget class="QDoubleSpinBox" name="doubleSpinBox"/>
+           <widget class="QDoubleSpinBox" name="latitudeSpinBox"/>
           </item>
           <item row="0" column="14">
-           <widget class="QPushButton" name="pushButton_2">
+           <widget class="QPushButton" name="ajouterEtape">
             <property name="text">
-             <string>PushButton</string>
+             <string>+</string>
             </property>
            </widget>
           </item>
           <item row="0" column="6" colspan="8">
-           <widget class="QLineEdit" name="lineEdit_2"/>
+           <widget class="QLineEdit" name="nomEtape"/>
           </item>
          </layout>
         </widget>

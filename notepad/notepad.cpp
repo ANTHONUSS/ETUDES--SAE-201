@@ -40,7 +40,7 @@ Notepad::Notepad(QWidget *parent)
     connect(ui->actionExporter, &QAction::triggered, this, &Notepad::exportPDF);
 
     connect(ui->numEtape, QOverload<int>::of(&QSpinBox::valueChanged), this, &Notepad::onNumEtapeChanged);
-    connect(ui->spinBox_2, QOverload<int>::of(&QSpinBox::valueChanged), this, &Notepad::onNumParcoursChanged);
+    connect(ui->numParcours, QOverload<int>::of(&QSpinBox::valueChanged), this, &Notepad::onNumParcoursChanged);
 
     std::cout << "\t[+]NotePad" << std::endl;
     connect(ui->exportMap, &QPushButton::clicked, this, &Notepad::exportMap);
@@ -111,8 +111,8 @@ void Notepad::open() {
         lastParcours->addEtape(titre, 0.0f, 0.0f, dialog, reponse); //TODO: Remplacer 0.0f par les valeurs réelles de latitude et longitude
     }
 
-    ui->spinBox_2->setMaximum(parcoursList.size());
-    ui->spinBox_2->setValue(parcoursList.size());
+    ui->numParcours->setMaximum(parcoursList.size());
+    ui->numParcours->setValue(parcoursList.size());
     ui->numEtape->setMaximum(lastParcours->getNombreEtapes());
     ui->numEtape->setValue(1);
 
@@ -136,11 +136,11 @@ QString Notepad::getDialog(QTextStream& in) const {
 }
 
 void Notepad::afficherEtape(int index) {
-    Parcours* parcours = parcoursList.at(ui->spinBox_2->value()-1);
+    Parcours* parcours = parcoursList.at(ui->numParcours->value()-1);
     Etape* etape = parcours->getEtape(index);
-    ui->lineEdit_2->setText(etape->getTitre());
-    ui->doubleSpinBox->setValue(etape->getLatitude());
-    ui->doubleSpinBox_2->setValue(etape->getLongitude());
+    ui->nomEtape->setText(etape->getTitre());
+    ui->latitudeSpinBox->setValue(etape->getLatitude());
+    ui->LongitudeSpinBox->setValue(etape->getLongitude());
     ui->spinBox->setValue(etape->getReponse());
 
     /*TODO:
@@ -161,10 +161,11 @@ void Notepad::afficherParcours(int index) {
     QImage img(parcours->getImage());
     if (!img.isNull()) {
         ui->sideImage->setPixmap(QPixmap::fromImage(img));
-        ui->lineEdit->setText(parcours->getImage());
+        ui->
+        imagePath->setText(parcours->getImage());
     } else {
         ui->sideImage->setText("Image non trouvée");
-        ui->lineEdit->setText(QString());
+        ui->imagePath->setText(QString());
     }
     //TODO: mettre l'entête ailleurs sur le graphique
     ui->numEtape->setValue(1);
@@ -232,7 +233,7 @@ void Notepad::exportMap() {
     }
 
     // Récupérer le parcours actuellement sélectionné
-    int parcoursIndex = ui->spinBox_2->value() - 1;
+    int parcoursIndex = ui->numParcours->value() - 1;
     if (parcoursIndex < 0 || parcoursIndex >= parcoursList.size()) {
         QMessageBox::warning(this, "Erreur", "Index de parcours invalide.");
         return;
@@ -459,14 +460,14 @@ void Notepad::showAbout() {
 
 void Notepad::onNumEtapeChanged(int value) {
     //TODO: enregistrer l'étape avant de changer (pour ça faut faire la fonction save avant)
-    if (value < 1 || value > parcoursList.at(ui->spinBox_2->value()-1)->getNombreEtapes())
+    if (value < 1 || value > parcoursList.at(ui->numParcours->value()-1)->getNombreEtapes())
         return;
     afficherEtape(value - 1);
 }
 
 void Notepad::onNumParcoursChanged(int value) {
     //TODO: enregistrer le parcours avant de changer (pour ça faut faire la fonction save avant)
-    if (value < 1 || value > parcoursList.at(ui->spinBox_2->value()-1)->getNombreEtapes())
+    if (value < 1 || value > parcoursList.at(ui->numParcours->value()-1)->getNombreEtapes())
         return;
     afficherParcours(value - 1);
 }
