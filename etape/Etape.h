@@ -16,6 +16,15 @@ public:
     Etape();
     Etape(const QString &titre, float latitude, float longitude, const QString &dialog, int reponse);
     Etape(const Etape &e);
+
+    const QString &getTitre() const;
+    float getLatitude() const;
+    float getLongitude() const;
+    const QString &getTexte() const;
+    int getReponse() const;
+    void setLatitude(int d, float m, float s);
+    void setLongitude(float d, float m, float s);
+
     ~Etape();
 
     void setLatitude(int d, float m, QChar NS);
