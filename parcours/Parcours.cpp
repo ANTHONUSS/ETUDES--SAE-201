@@ -47,25 +47,30 @@ Parcours::~Parcours() {
 
 
 void Parcours::addEtape(const QString &titre, const QString &dialog, int reponse,
-		int latD, int latM, int latS, QString NS,
-		int lonD, int lonM, int lonS, QString WE) {
+		int latD, float latM, QString NS,
+		int lonD, float lonM, QString WE) {
 	etapes.push_back(new Etape(titre, dialog, reponse,
-		latD, latM, latS, NS,
-		lonD, lonM, lonS, WE));
+		latD, latM, NS,
+		lonD, lonM, WE));
 }
 
 std::ostream& operator<<(std::ostream& os, const Parcours& p) {
-os << "Parcours: " << p.nom.toStdString()
-   << "\n  Ville: " << p.ville.toStdString()
-   << "\n  Departement: " << p.departement
-   << "\n  Difficulte: " << p.difficulte
-   << "\n  Duree: " << p.duree
-   << "\n  Kilometre: " << p.kilometre
-   << "\n  Image: " << p.image.toStdString()
-   << "\n  Entete: \n" << p.entete.toStdString();
+	os << "Parcours: " << p.nom.toStdString()
+	   << "\n  Ville: " << p.ville.toStdString()
+	   << "\n  Departement: " << p.departement
+	   << "\n  Difficulte: " << p.difficulte
+	   << "\n  Duree: " << p.duree
+	   << "\n  Kilometre: " << p.kilometre
+	   << "\n  Image: " << p.image.toStdString()
+	   << "\n  Entete: \n" << p.entete.toStdString();
 
-for (Etape* e : p.etapes) {
-    os << "\n  " << *e; // Appel de l'opérateur << pour chaque étape
-}
+	for (Etape* e : p.etapes) {
+	    os << "\n  " << *e;
+	}
+
 	return os;
+}
+
+void Parcours::supprimerEtape(int index) {
+	etapes.remove(index);
 }

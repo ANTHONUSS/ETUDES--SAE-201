@@ -44,6 +44,7 @@ Notepad::Notepad(QWidget *parent)
 
     std::cout << "\t[+]NotePad" << std::endl;
     connect(ui->exportMap, &QPushButton::clicked, this, &Notepad::exportMap);
+    connect(ui->supprEtape, &QPushButton::clicked, this, Notepad::supprEtape );
 }
 
 Notepad::~Notepad() {
@@ -108,22 +109,17 @@ void Notepad::open() {
 
         QString NS = parts[0];
         int latD = parts[1].toInt();
-        QStringList latSplit = parts[2].split('.', Qt::SkipEmptyParts);
-        int latM = latSplit[0].toInt();
-        int latS = latSplit[1].toInt();
+        float latM = parts[2].toFloat();
         QString WE = parts[3];
         int lonD = parts[4].toInt();
-        QStringList lonSplit = parts[5].split('.', Qt::SkipEmptyParts);
-        int lonM = lonSplit[0].toInt();
-        int lonS = lonSplit[1].toInt();
-
+        float lonM = parts[5].toFloat();
 
         int reponse = in.readLine().toInt();
         QString dialog = getDialog(in);
 
         lastParcours->addEtape(titre, dialog, reponse,
-            latD, latM, latS, NS,
-            lonD, lonM, lonS, WE);
+            latD, latM, NS,
+            lonD, lonM, WE);
     }
 
     ui->numParcours->setMaximum(parcoursList.size());
@@ -156,7 +152,7 @@ void Notepad::afficherEtape(int index) {
     ui->nomEtape->setText(etape->getTitre());
     ui->latitudeSpinBox->setValue(etape->getLatitude());
     ui->LongitudeSpinBox->setValue(etape->getLongitude());
-    ui->spinBox->setValue(etape->getReponse());
+    ui->reponse->setValue(etape->getReponse());
 
     /*TODO:
      * Ajouter le fait que les noms des bougs soient lues avec des images avant
@@ -406,6 +402,46 @@ void Notepad::exportMap() {
     QMessageBox::information(this, "Exportation de la carte",
                            "Carte exportée avec succès en HTML.", QMessageBox::Ok);
 }
+void Notepad::supprEtape() {
+    if (ui->numEtape->value() - 1!=0) {
+    int numEtape = ui->numEtape->value() - 1;
+    int numParcours = ui->numParcours->value() - 1;
+    Parcours* parcours = parcoursList.at(numParcours);
+    if (numEtape < 0 || numEtape >= parcours->getNombreEtapes()) {
+        QMessageBox::warning(this, "Erreur", "Numéro d'étape invalide.");
+        return;
+    }
+    // Supprimer l'étape avec la fonction remove de vector
+    parcoursList.at(numParcours)->supprimerEtape(numEtape);
+    ui->numEtape->setMaximum(parcours->getNombreEtapes());
+    afficherEtape(numEtape-1);
+    }
+    else {
+        // reset toutes les valeurs
+        ui->nomEtape->setText("");
+        ui->latitudeSpinBox->setValue(0.0f);
+        ui->LongitudeSpinBox->setValue(0.0f);
+        ui->reponse->setValue(0);
+        ui->textArea->setHtml("");
+        ui->numEtape->setValue(1);
+        ui->numEtape->setMaximum(1);
+        ui->numParcours->setValue(1);
+        ui->numParcours->setMaximum(1);
+        ui->nomParcours->setText("");
+        ui->localisationInput->setText("");
+        ui->dptInput->setValue(0);
+        ui->diffuculteInput->setValue(0);
+        ui->dureeInput->setValue(0.0f);
+        ui->longueurInput->setValue(0.0f);
+        ui->sideImage->setText("Aucune image");
+        ui->imagePath->setText("");
+        ui->enteteArea->setText("");
+
+
+    }
+}
+
+
 
 void Notepad::insertImage() {
     QString fileName = QFileDialog::getOpenFileName(this,
