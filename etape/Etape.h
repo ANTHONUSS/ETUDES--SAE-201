@@ -15,13 +15,13 @@ class Etape {
 public:
     Etape();
     Etape(const QString &titre, const QString &dialog, int reponse,
-        int latD, int latM, int latS, QString NS,
-        int lonD, int lonM, int lonS, QString WE);
+        int latD, float latM, QString NS,
+        int lonD, float lonM, QString WE);
     Etape(const Etape &e);
     ~Etape();
 
-    void setLatitude(int d, int m, int s, QString NS);
-    void setLongitude(int d, int m, int s, QString WE);
+    void setLatitude(int d, float m, QString NS);
+    void setLongitude(int d, float m, QString WE);
 
     QString getCoordonnee();
 
@@ -31,7 +31,6 @@ public:
     float getLatitude() const { return latitude; }
     float getLongitude() const { return longitude; }
     QString getDialog() const { return dialog; }
-
     int getReponse() const { return reponse; }
 
 
