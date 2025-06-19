@@ -110,22 +110,17 @@ void Notepad::open() {
 
         QString NS = parts[0];
         int latD = parts[1].toInt();
-        QStringList latSplit = parts[2].split('.', Qt::SkipEmptyParts);
-        int latM = latSplit[0].toInt();
-        int latS = latSplit[1].toInt();
+        float latM = parts[2].toFloat();
         QString WE = parts[3];
         int lonD = parts[4].toInt();
-        QStringList lonSplit = parts[5].split('.', Qt::SkipEmptyParts);
-        int lonM = lonSplit[0].toInt();
-        int lonS = lonSplit[1].toInt();
-
+        float lonM = parts[5].toFloat();
 
         int reponse = in.readLine().toInt();
         QString dialog = getDialog(in);
 
         lastParcours->addEtape(titre, dialog, reponse,
-            latD, latM, latS, NS,
-            lonD, lonM, lonS, WE);
+            latD, latM, NS,
+            lonD, lonM, WE);
     }
 
     ui->numParcours->setMaximum(parcoursList.size());
