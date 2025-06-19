@@ -46,8 +46,12 @@ Parcours::~Parcours() {
 }
 
 
-void Parcours::addEtape(const QString &titre, float latitude, float longitude, const QString &dialog, int reponse) {
-	etapes.push_back(new Etape(titre, latitude, longitude, dialog, reponse));
+void Parcours::addEtape(const QString &titre, const QString &dialog, int reponse,
+		int latD, int latM, int latS, QString NS,
+		int lonD, int lonM, int lonS, QString WE) {
+	etapes.push_back(new Etape(titre, dialog, reponse,
+		latD, latM, latS, NS,
+		lonD, lonM, lonS, WE));
 }
 
 std::ostream& operator<<(std::ostream& os, const Parcours& p) {

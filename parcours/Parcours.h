@@ -26,7 +26,9 @@ public:
     ~Parcours();
 
 
-	void addEtape(const QString &titre, float latitude, float longitude, const QString &dialog, int reponse);
+	void addEtape(const QString &titre, const QString &dialog, int reponse,
+		int latD, int latM, int latS, QString NS,
+		int lonD, int lonM, int lonS, QString WE);
 
 	friend std::ostream &operator<<(std::ostream &os, const Parcours &p);
 

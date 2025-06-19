@@ -117,13 +117,14 @@ void Notepad::open() {
         QStringList lonSplit = parts[5].split('.', Qt::SkipEmptyParts);
         int lonM = lonSplit[0].toInt();
         int lonS = lonSplit[1].toInt();
-        //TODO: ajouter les coordonnées dans l'étape
 
 
         int reponse = in.readLine().toInt();
         QString dialog = getDialog(in);
 
-        lastParcours->addEtape(titre, 0.0f, 0.0f, dialog, reponse); //TODO: Remplacer 0.0f par les valeurs réelles de latitude et longitude
+        lastParcours->addEtape(titre, dialog, reponse,
+            latD, latM, latS, NS,
+            lonD, lonM, lonS, WE);
     }
 
     ui->numParcours->setMaximum(parcoursList.size());

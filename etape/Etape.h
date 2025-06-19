@@ -14,12 +14,14 @@ class Etape {
 
 public:
     Etape();
-    Etape(const QString &titre, float latitude, float longitude, const QString &dialog, int reponse);
+    Etape(const QString &titre, const QString &dialog, int reponse,
+        int latD, int latM, int latS, QString NS,
+        int lonD, int lonM, int lonS, QString WE);
     Etape(const Etape &e);
     ~Etape();
 
-    void setLatitude(int d, float m, QChar NS);
-    void setLongitude(int d, float m, QChar EW);
+    void setLatitude(int d, int m, int s, QString NS);
+    void setLongitude(int d, int m, int s, QString WE);
 
     QString getCoordonnee();
 
