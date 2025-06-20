@@ -183,7 +183,44 @@ void Notepad::afficherParcours(int index) {
     afficherEtape(0);
 }
 
+void Notepad::createParcours() {
+    QString nom = ui->nomParcours->text();
+    QString localisation = ui->localisationInput->text();
+    unsigned short int departement = ui->dptInput->value();
+    unsigned short int difficulte = ui->diffuculteInput->value();
+    float duree = ui->dureeInput->value();
+    float longueur = ui->longueurInput->value();
+    QString imagePath = ui->imagePath->text();
+    QString entete = ui->enteteArea->toPlainText();
+
+    addParcours(nom, localisation, departement, difficulte, duree, longueur, imagePath, entete);
+}
+
+void Notepad::createEtape(int parcoursIndex) {
+    QString titre = ui->nomEtape->text();
+    QString dialog = ui->textArea->toPlainText();
+    int reponse = ui->reponse->value();
+    int latD = static_cast<int>(ui->latitudeSpinBox->value());
+    float latM = ui->latitudeSpinBox->value() - latD;
+    QString NS = (latD >= 0) ? "N" : "S";
+    int lonD = static_cast<int>(ui->LongitudeSpinBox->value());
+    float lonM = ui->LongitudeSpinBox->value() - lonD;
+    QString WE = (lonD >= 0) ? "E" : "W";
+
+    delete parcoursList.at(parcoursIndex);
+
+    parcoursList.at(parcoursIndex)->addEtape(titre, dialog, reponse,
+        latD, latM, NS,
+        lonD, lonM, WE);
+}
+
 void Notepad::save() {
+
+    if (ui->nomParcours->text() == "" || ui->nomParcours->text().isEmpty()) {
+        QMessageBox::warning(this, "Warning", "Le nom du parcours ne peut pas être vide.");
+        return;
+    }
+
     QString filePath = "data/saves/" + ui->nomParcours->text() + ".txt";
 
     QDir dir("data");
@@ -519,14 +556,14 @@ void Notepad::showAbout() {
 }
 
 void Notepad::onNumEtapeChanged(int value) {
-    //TODO: enregistrer l'étape avant de changer (pour ça faut faire la fonction save avant)
+    save();
     if (value < 1 || value > parcoursList.at(ui->numParcours->value()-1)->getNombreEtapes())
         return;
     afficherEtape(value - 1);
 }
 
 void Notepad::onNumParcoursChanged(int value) {
-    //TODO: enregistrer le parcours avant de changer (pour ça faut faire la fonction save avant)
+    save();
     if (value < 1 || value > parcoursList.at(ui->numParcours->value()-1)->getNombreEtapes())
         return;
     afficherParcours(value - 1);
