@@ -649,12 +649,10 @@ void Notepad::showAbout() {
 }
 
 void Notepad::onNumEtapeChanged(int value) {
-    //save();
     afficherEtape(value - 1);
 }
 
 void Notepad::onNumParcoursChanged(int value) {
-    //save();
     afficherParcours(value - 1);
 }
 
@@ -667,11 +665,11 @@ void Notepad::ajouterEtape() {
     Parcours* parcours = parcoursList.at(ui->numParcours->value()-1);
     //check si le parcours a déjà des étapes, si oui, on ajoute l'étape à la fin et si non on prend l'autre fonction addEtape
     if (parcours->getNombreEtapes() > 0) {
-        int i = parcours->getNombreEtapes();
-        parcours->addEtape(i, "", "", 0, 0, 0.0f, "N", 0, 0.0f, "E");
-        ui->numEtape->setMaximum(parcours->getNombreEtapes()+1);
-        ui->numEtape->setValue(i+1);
-        afficherEtape(i);
+    int i = ui->numEtape->value()-1;
+        parcours->addEtape(i+1, "", "", 0, 0, 0.0f, "N", 0, 0.0f, "E");
+        ui->numEtape->setMaximum(parcours->getNombreEtapes());
+        ui->numEtape->setValue(i+2);
+        afficherEtape(i+1);
     } else {
         // Si c'est le premier ajout d'étape, on utilise la méthode addEtape avec des valeurs par défaut
         parcours->addEtape("", "", 0, 0, 0.0f, "N", 0, 0.0f, "E");
