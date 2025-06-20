@@ -4,7 +4,6 @@
 #include <iostream>
 #include <QString>
 
-
 class Etape {
     QString titre;
     float latitude;

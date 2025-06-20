@@ -5,7 +5,13 @@
 
 
 //constructeur
-Parcours::Parcours() {
+Parcours::Parcours() : nom(""), ville(""),
+	departement(0), difficulte(0),
+	duree(0.0f), kilometre(0.0f),
+	image(""), entete("")
+{
+	std::cout << "\t[+]parcours" << std::endl;
+
 }
 
 Parcours::Parcours(const QString& nom, const QString& ville, int departement, unsigned int difficulte, float duree,

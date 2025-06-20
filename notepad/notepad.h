@@ -12,11 +12,12 @@
 #include <QFontDialog>
 #include <QColorDialog>
 #include <QPrinter>
+#include <QImageReader>
 #include <iostream>
+
 #include "../parcours/Parcours.h"
-
 #include "../etape/Etape.h"
-
+#include "../personnage/Personnage.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Notepad; }
@@ -28,6 +29,7 @@ Q_OBJECT
 	Ui::Notepad *ui;
 	QString currentFilePath;
 	QVector<Parcours*> parcoursList;
+    QVector<Personnage*> persoList;
 
 public:
     explicit Notepad(QWidget *parent = nullptr);
@@ -41,6 +43,9 @@ public:
 
 	void afficherEtape(int index);
 	void afficherParcours(int index);
+
+    bool PersoExiste(const QString &p);
+    void initPerso();
 
 private slots:
     void newDocument();
@@ -69,6 +74,7 @@ private slots:
 	void supprEtape();
 	void supprParcours();
 	void ajouterEtape();
+	void selectionnerImage();
 
 };
 

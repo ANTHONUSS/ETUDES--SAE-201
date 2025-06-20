@@ -41,14 +41,15 @@ Notepad::Notepad(QWidget *parent)
     connect(ui->numEtape, QOverload<int>::of(&QSpinBox::valueChanged), this, &Notepad::onNumEtapeChanged);
     connect(ui->numParcours, QOverload<int>::of(&QSpinBox::valueChanged), this, &Notepad::onNumParcoursChanged);
 
-    std::cout << "\t[+]NotePad" << std::endl;
     connect(ui->exportMap, &QPushButton::clicked, this, &Notepad::exportMap);
     connect(ui->supprEtape, &QPushButton::clicked, this, &Notepad::supprEtape);
     connect(ui->supprimerBouton, &QPushButton::clicked, this, &Notepad::supprParcours);
-    connect(ui->supprEtape, &QPushButton::clicked, this, Notepad::supprEtape );
     connect(ui->ajouterEtape, &QPushButton::clicked, this, &Notepad::ajouterEtape);
+    connect(ui->imageSelectionButton, &QPushButton::clicked, this, &Notepad::selectionnerImage);
 
     addParcours();
+
+    std::cout << "\t[+]NotePad" << std::endl;
 }
 
 Notepad::~Notepad() {
@@ -59,24 +60,73 @@ Notepad::~Notepad() {
     }
     parcoursList.clear();
 
+    for (Personnage* perso : persoList) {
+        delete perso;
+    }
+    persoList.clear();
+
     std::cout << "\t[-]Notepad" << std::endl;
 }
 
+//on ajoute un nouveau parcours
 void Notepad::addParcours(const QString& nom, const QString& ville, int departement, unsigned int difficulte,
     float duree, float kilometre, const QString& image, const QString& entete)
 {
     parcoursList.push_back(new Parcours(nom, ville, departement, difficulte, duree, kilometre, image, entete));
 }
 
+
 void Notepad::addParcours() {
     parcoursList.push_back(new Parcours("", "", 0, 0, 0, 0, "", ""));
+}
+
+//initialise la liste des personnages
+void Notepad::initPerso() {
+
+    QDir dir(":/Personnages/personnages-parcours");
+
+    for (const QFileInfo &fichier : dir.entryInfoList(QDir::Files)){
+        Personnage* p=new Personnage(fichier.baseName(),fichier.absoluteFilePath());
+        persoList.push_back(p);
+    }
+}
+
+//on check si le personnage se trouve dans la liste
+bool Notepad::PersoExiste(const QString &p){
+    for (Personnage* x:persoList){
+        if(comparesEqual(x->getNom(),p)){
+            return true;
+        }
+    }
+    return false;
 }
 
 // On créé un nouveau document
 void Notepad::newDocument() {
     currentFilePath.clear();
-    ui->textArea->setText(QString());
     setWindowTitle("Notepad : Nouveau Document");
+    //création d'un nouveau parcours
+    addParcours("", "", 0, 0, 0.0f, 0.0f, "", "");
+    parcoursList.last()->addEtape("", "", 0, 0, 0.0f, "N", 0, 0.0f, "E");
+    ui->nomEtape->setText("");
+    ui->latitudeSpinBox->setValue(0.0f);
+    ui->LongitudeSpinBox->setValue(0.0f);
+    ui->reponse->setValue(0);
+    ui->textArea->setHtml("");
+    ui->numEtape->setValue(1);
+    ui->numEtape->setMaximum(1);
+    ui->numParcours->setMaximum(parcoursList.size());
+    ui->numParcours->setValue(parcoursList.size());
+    ui->nomParcours->setText("");
+    ui->localisationInput->setText("");
+    ui->dptInput->setValue(0);
+    ui->diffuculteInput->setValue(0);
+    ui->dureeInput->setValue(0.0f);
+    ui->longueurInput->setValue(0.0f);
+    ui->sideImage->setText("Aucune image");
+    ui->imagePath->setText("");
+    ui->enteteArea->setText("");
+
 }
 
 // On ouvre un document
@@ -541,8 +591,6 @@ void Notepad::insertImage() {
     }
 }
 
-
-
 void Notepad::selectFont() {
     bool fontSelected;
     QFont font = QFontDialog::getFont(&fontSelected, this);
@@ -602,15 +650,11 @@ void Notepad::showAbout() {
 
 void Notepad::onNumEtapeChanged(int value) {
     //save();
-    if (value < 1 || value > parcoursList.at(ui->numParcours->value()-1)->getNombreEtapes())
-        return;
     afficherEtape(value - 1);
 }
 
 void Notepad::onNumParcoursChanged(int value) {
     //save();
-    if (value < 1 || value > parcoursList.at(ui->numParcours->value()-1)->getNombreEtapes())
-        return;
     afficherParcours(value - 1);
 }
 
@@ -621,12 +665,65 @@ void Notepad::ajouterEtape() {
     }
     //ajout d'une étape sur le parcours courant et champs vides
     Parcours* parcours = parcoursList.at(ui->numParcours->value()-1);
-    int i = ui->numEtape->value();
-    parcours->addEtape(i,"", "", 0, 0, 0.0f, "N", 0, 0.0f, "E");
-    ui->numEtape->setMaximum(parcours->getNombreEtapes()+1);
-    ui->numEtape->setValue(i+1);
-    afficherEtape(i);
+    //check si le parcours a déjà des étapes, si oui, on ajoute l'étape à la fin et si non on prend l'autre fonction addEtape
+    if (parcours->getNombreEtapes() > 0) {
+        int i = parcours->getNombreEtapes();
+        parcours->addEtape(i, "", "", 0, 0, 0.0f, "N", 0, 0.0f, "E");
+        ui->numEtape->setMaximum(parcours->getNombreEtapes()+1);
+        ui->numEtape->setValue(i+1);
+        afficherEtape(i);
+    } else {
+        // Si c'est le premier ajout d'étape, on utilise la méthode addEtape avec des valeurs par défaut
+        parcours->addEtape("", "", 0, 0, 0.0f, "N", 0, 0.0f, "E");
+        ui->numEtape->setMaximum(1);
+        ui->numEtape->setValue(1);
+        afficherEtape(0);
+    }
+
 }
 
+void Notepad::selectionnerImage() {
+    QString fileName = QFileDialog::getOpenFileName(this, "Sélectionner une image", "", "Images (*.png *.jpg *.jpeg *.bmp *.gif)");
+    if (fileName.isEmpty()) return;
 
+    ui->imagePath->setText(fileName);
+    QFileInfo fileInfo(fileName);
+    QString extension = fileInfo.suffix().toLower();
+    bool isJpeg = (extension == "jpg" || extension == "jpeg");
 
+    if (isJpeg) {
+        // Méthode manuelle de conversion JPEG -> PNG
+        QFile file(fileName);
+        if (!file.open(QIODevice::ReadOnly)) {
+            ui->sideImage->setText("Impossible d'ouvrir le fichier");
+            return;
+        }
+
+        QByteArray jpegData = file.readAll();
+        file.close();
+
+        // Tenter de créer une QImage à partir des données brutes avec différents formats
+        QImage img;
+        if (!img.loadFromData(jpegData, "JPEG")) {
+            if (!img.loadFromData(jpegData)) {
+                ui->sideImage->setText("Impossible de décoder l'image");
+                return;
+            }
+        }
+
+        // Si on arrive ici, la QImage a été créée
+        // Sauvegarder en PNG
+        QString tempPath = QDir::tempPath() + "/" + fileInfo.baseName() + "_temp.png";
+        if (img.save(tempPath, "PNG")) {
+            fileName = tempPath;
+            qDebug() << "Image convertie en PNG:" << tempPath;
+        }
+    }
+
+    QImage img(fileName);
+    if (!img.isNull()) {
+        ui->sideImage->setPixmap(QPixmap::fromImage(img));
+    } else {
+        ui->sideImage->setText("Format d'image non supporté");
+    }
+}
