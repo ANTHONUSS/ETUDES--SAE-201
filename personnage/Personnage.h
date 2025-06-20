@@ -9,16 +9,16 @@ class Personnage {
     QString chemin;
 public:
     Personnage();
-    Personnage(QString n, QString c);
+    Personnage(const QString &n, const QString &c);
     ~Personnage();
 
     const QString &getNom() const;
 
-    void setNom(const QString &nom);
+    void setNom(const QString &n);
 
     const QString &getChemin() const;
 
-    void setChemin(const QString &chemin);
+    void setChemin(const QString &c);
 };
 
 
