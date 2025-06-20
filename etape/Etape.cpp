@@ -2,6 +2,10 @@
 #include "Etape.h"
 
 //constructeur
+Etape::Etape():	titre(""), dialog(""), reponse(0), latitude(0.0f), longitude(0.0f) {
+	std::cout << "\t[+]Etape" << std::endl;
+}
+
 Etape::Etape(const QString& titre, const QString& dialog, int reponse,
              int latD, float latM, QString NS,
              int lonD, float lonM, QString WE)
@@ -11,10 +15,6 @@ Etape::Etape(const QString& titre, const QString& dialog, int reponse,
 	setLatitude(latD, latM, NS);
 	setLongitude(lonD, lonM, WE);
 
-	std::cout << "\t[+]Etape" << std::endl;
-}
-
-Etape::Etape() {
 	std::cout << "\t[+]Etape" << std::endl;
 }
 
