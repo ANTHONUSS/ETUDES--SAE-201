@@ -13,12 +13,12 @@ public:
     ~Personnage();
 
     const QString &getNom() const;
-
     void setNom(const QString &n);
-
     const QString &getChemin() const;
-
     void setChemin(const QString &c);
+
+
+
 };
 
 

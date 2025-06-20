@@ -44,6 +44,7 @@ Notepad::Notepad(QWidget *parent)
 
     std::cout << "\t[+]NotePad" << std::endl;
     connect(ui->exportMap, &QPushButton::clicked, this, &Notepad::exportMap);
+
 }
 
 Notepad::~Notepad() {
@@ -54,13 +55,42 @@ Notepad::~Notepad() {
     }
     parcoursList.clear();
 
+    for (Personnage* perso : persoList) {
+        delete perso;
+    }
+    persoList.clear();
+
     std::cout << "\t[-]Notepad" << std::endl;
 }
 
+//on ajoute un nouveau parcours
 void Notepad::addParcours(const QString& nom, const QString& ville, int departement, unsigned int difficulte,
     float duree, float kilometre, const QString& image, const QString& entete)
 {
     parcoursList.push_back(new Parcours(nom, ville, departement, difficulte, duree, kilometre, image, entete));
+}
+
+//initialise la liste des personnages
+void Notepad::initPerso() {
+
+    QDir dir(":/Personnages/personnages-parcours");
+
+    for (const QFileInfo &fichier : dir.entryInfoList(QDir::Files)){
+//        std::cout<<fichier.baseName().toStdString()<<std::endl;
+//        std::cout<<fichier.absoluteFilePath().toStdString()<<std::endl;
+        Personnage* p=new Personnage(fichier.baseName(),fichier.absoluteFilePath());
+        persoList.push_back(p);
+    }
+}
+
+//on check si le personnage se trouve dans la liste
+bool Notepad::PersoExiste(const QString &p){
+    for (Personnage* x:persoList){
+        if(comparesEqual(x->getNom(),p)){
+            return true;
+        }
+    }
+    return false;
 }
 
 // On créé un nouveau document
@@ -413,8 +443,6 @@ void Notepad::insertImage() {
         cursor.insertImage(fileName);
     }
 }
-
-
 
 void Notepad::selectFont() {
     bool fontSelected;
