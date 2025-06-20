@@ -40,8 +40,8 @@ public:
 
 	void afficherEtape(int index);
 	void afficherParcours(int index);
-	void createParcours();
-	void createEtape(int parcoursIndex);
+	void createParcours(int parcoursIndex);
+	void createEtape(int parcoursIndex, int etapeIndex);
 
 private slots:
     void newDocument();

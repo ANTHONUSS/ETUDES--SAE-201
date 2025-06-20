@@ -185,7 +185,7 @@ void Notepad::afficherParcours(int index) {
     afficherEtape(0);
 }
 
-void Notepad::createParcours() {
+void Notepad::createParcours(int parcoursIndex) {
     QString nom = ui->nomParcours->text();
     QString localisation = ui->localisationInput->text();
     unsigned short int departement = ui->dptInput->value();
@@ -195,10 +195,20 @@ void Notepad::createParcours() {
     QString imagePath = ui->imagePath->text();
     QString entete = ui->enteteArea->toPlainText();
 
-    addParcours(nom, localisation, departement, difficulte, duree, longueur, imagePath, entete);
+    if (parcoursList.size()==0)
+        addParcours(nom, localisation, departement, difficulte, duree, longueur, imagePath, entete);
+    else {
+        // Redimensionner le vecteur de parcours si besoin
+        if (parcoursIndex >= parcoursList.size())
+            parcoursList.resize(parcoursIndex + 1, nullptr);
+
+        delete parcoursList[parcoursIndex];
+
+        parcoursList[parcoursIndex] = new Parcours(nom, localisation, departement, difficulte, duree, longueur, imagePath, entete);
+    }
 }
 
-void Notepad::createEtape(int parcoursIndex) {
+void Notepad::createEtape(int parcoursIndex, int etapeIndex) {
     QString titre = ui->nomEtape->text();
     QString dialog = ui->textArea->toPlainText();
     int reponse = ui->reponse->value();
@@ -209,11 +219,22 @@ void Notepad::createEtape(int parcoursIndex) {
     float lonM = ui->LongitudeSpinBox->value() - lonD;
     QString WE = (lonD >= 0) ? "E" : "W";
 
-    delete parcoursList.at(parcoursIndex);
-
-    parcoursList.at(parcoursIndex)->addEtape(titre, dialog, reponse,
+    Parcours* parcours = parcoursList[parcoursIndex];
+    if (parcours->getNombreEtapes()==0)
+        parcours->addEtape(titre, dialog, reponse,
         latD, latM, NS,
         lonD, lonM, WE);
+    else {
+        QVector<Etape*> etapes = parcours->getEtapes();
+        if (parcoursIndex >= parcoursList.size())
+            parcoursList.resize(parcoursIndex + 1, nullptr);
+
+        delete etapes[etapeIndex];
+
+        parcoursList.at(parcoursIndex)->getEtapes()[etapeIndex] = new Etape(titre, dialog, reponse,
+                                                                            latD, latM, NS,
+                                                                            lonD, lonM, WE);
+    }
 }
 
 void Notepad::save() {
@@ -238,7 +259,7 @@ void Notepad::save() {
         QMessageBox::warning(this, "Warning", "Impossible d'enregistrer le fichier : " + file.errorString());
         return;
     }
-    setWindowTitle("Tèrr’Aventura creator : " + filePath);
+    setWindowTitle("Tèrr’Aventura creator : " + QFileInfo(file).absoluteFilePath());
     QTextStream out(&file);
 
     out << ui->nomParcours->text() << "\n";
@@ -248,16 +269,22 @@ void Notepad::save() {
     out << ui->dureeInput->value() << "\n";
     out << ui->longueurInput->value() << "\n";
     out << ui->imagePath->text() << "\n";
-    out << ui->enteteArea->toPlainText() << "%\n";
+    out << ui->enteteArea->toPlainText().trimmed() << "\n";
+    out << "%\n";
 
-    Parcours* parcours = parcoursList.at(ui->numParcours->value()-1);
+
+    int indexToGet = ui->numParcours->value() - 1;
+    createParcours(indexToGet);
+    createEtape(indexToGet, 0);
+
+    Parcours* parcours = parcoursList.at(indexToGet);
     int cpt = 1;
     for (Etape* etape : parcours->getEtapes()) {
         out << cpt++ << "\n";
         out << etape->getTitre() << "\n";
         out << etape->getCoordonnee(true) << "\n";
         out << etape->getReponse() << "\n";
-        out << etape->getDialog(); //TODO: ajouter les # pour les dialogues
+        out << etape->getDialog().trimmed() << "\n"; //TODO: ajouter les # pour les dialogues
         out << "%\n";
     }
 
