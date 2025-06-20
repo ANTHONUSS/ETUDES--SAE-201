@@ -80,3 +80,20 @@ std::ostream& operator<<(std::ostream& os, const Parcours& p) {
 void Parcours::supprimerEtape(int index) {
 	etapes.remove(index);
 }
+
+void Parcours::modifierParcours(const QString& nom, const QString& ville, int departement, unsigned int difficulte,
+	float duree, float kilometre, const QString& image, const QString& entete, Etape* etape, int etapeIndex) {
+	this->nom = nom;
+	this->ville = ville;
+	this->departement = departement;
+	this->difficulte = difficulte;
+	this->duree = duree;
+	this->kilometre = kilometre;
+	this->image = image;
+	this->entete = entete;
+	if (etapeIndex >= 0 && etapeIndex < etapes.size()) {
+		etapes[etapeIndex] = etape; // Remplace l'étape à l'index spécifié
+	} else {
+		std::cerr << "Index d'étape invalide pour la modification du parcours." << std::endl;
+	}
+}

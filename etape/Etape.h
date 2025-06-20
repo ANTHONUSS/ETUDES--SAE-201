@@ -24,6 +24,7 @@ public:
     void setLongitude(int d, float m, QString WE);
 
     QString getCoordonnee(bool toFichier = false);
+    QString getCoordonnee(float latitude, float longitude, bool toFichier = false);
 
     friend std::ostream &operator<<(std::ostream &os, const Etape &e);
 

@@ -54,6 +54,10 @@ void Etape::setLongitude(int d, float m, QString WE) {
 
 //méthodes
 QString Etape::getCoordonnee(bool toFichier) {
+	return getCoordonnee(latitude, longitude, toFichier); // permet que si les variables sont pas envoyées, qu'on prenne celles de l'objet
+}
+
+QString Etape::getCoordonnee(float latitude, float longitude, bool toFichier) {
 	QChar hemiLat = (latitude < 0) ? 'S' : 'N';
 	QChar hemiLon = (longitude < 0) ? 'W' : 'E';
 

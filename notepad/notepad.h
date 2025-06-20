@@ -35,13 +35,12 @@ public:
 
     void addParcours(const QString &nom, const QString &ville, int departement, unsigned int difficulte, float duree,
              float kilometre, const QString &image, const QString &dialog);
+	void addParcours();
 
     QString getDialog(QTextStream& in) const;
 
 	void afficherEtape(int index);
 	void afficherParcours(int index);
-	void createParcours(int parcoursIndex);
-	void createEtape(int parcoursIndex, int etapeIndex);
 
 private slots:
     void newDocument();

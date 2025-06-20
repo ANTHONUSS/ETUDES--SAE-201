@@ -47,6 +47,8 @@ public:
 	QVector<Etape*> getEtapes() const { return etapes; }
 	Etape* getEtape(int index) { return (index >= 0 && index < etapes.size()) ? etapes[index] : nullptr; }
 	void supprimerEtape(int index);
+	void modifierParcours(const QString &nom, const QString &ville, int departement, unsigned int difficulte, float duree,
+			 float kilometre, const QString &image, const QString &entete, Etape* etape, int etapeIndex);
 };
 
 
