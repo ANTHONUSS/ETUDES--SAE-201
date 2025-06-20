@@ -391,6 +391,7 @@ void Notepad::exportMap() {
     QMessageBox::information(this, "Exportation de la carte",
                            "Carte exportée avec succès en HTML.", QMessageBox::Ok);
 }
+
 void Notepad::supprEtape() {
     if (ui->numEtape->value() - 1!=0) {
     int numEtape = ui->numEtape->value() - 1;
