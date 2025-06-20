@@ -244,6 +244,7 @@ void Notepad::afficherParcours(int index) {
     afficherEtape(0);
 }
 
+
 void Notepad::save() {
     if (ui->nomParcours->text() == "" || ui->nomParcours->text().isEmpty()) {
         QMessageBox::warning(this, "Warning", "Le nom du parcours ne peut pas être vide.");
