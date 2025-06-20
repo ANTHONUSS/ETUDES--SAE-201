@@ -41,13 +41,14 @@ Notepad::Notepad(QWidget *parent)
     connect(ui->numEtape, QOverload<int>::of(&QSpinBox::valueChanged), this, &Notepad::onNumEtapeChanged);
     connect(ui->numParcours, QOverload<int>::of(&QSpinBox::valueChanged), this, &Notepad::onNumParcoursChanged);
 
-    std::cout << "\t[+]NotePad" << std::endl;
     connect(ui->exportMap, &QPushButton::clicked, this, &Notepad::exportMap);
     connect(ui->supprEtape, &QPushButton::clicked, this, &Notepad::supprEtape);
     connect(ui->supprimerBouton, &QPushButton::clicked, this, &Notepad::supprParcours);
-    connect(ui->supprEtape, &QPushButton::clicked, this, Notepad::supprEtape );
     connect(ui->ajouterEtape, &QPushButton::clicked, this, &Notepad::ajouterEtape);
     connect(ui->imageSelectionButton, &QPushButton::clicked, this, &Notepad::selectionnerImage);
+
+
+    std::cout << "\t[+]NotePad" << std::endl;
 }
 
 Notepad::~Notepad() {
@@ -58,20 +59,68 @@ Notepad::~Notepad() {
     }
     parcoursList.clear();
 
+    for (Personnage* perso : persoList) {
+        delete perso;
+    }
+    persoList.clear();
+
     std::cout << "\t[-]Notepad" << std::endl;
 }
 
+//on ajoute un nouveau parcours
 void Notepad::addParcours(const QString& nom, const QString& ville, int departement, unsigned int difficulte,
     float duree, float kilometre, const QString& image, const QString& entete)
 {
     parcoursList.push_back(new Parcours(nom, ville, departement, difficulte, duree, kilometre, image, entete));
 }
 
+//initialise la liste des personnages
+void Notepad::initPerso() {
+
+    QDir dir(":/Personnages/personnages-parcours");
+
+    for (const QFileInfo &fichier : dir.entryInfoList(QDir::Files)){
+        Personnage* p=new Personnage(fichier.baseName(),fichier.absoluteFilePath());
+        persoList.push_back(p);
+    }
+}
+
+//on check si le personnage se trouve dans la liste
+bool Notepad::PersoExiste(const QString &p){
+    for (Personnage* x:persoList){
+        if(comparesEqual(x->getNom(),p)){
+            return true;
+        }
+    }
+    return false;
+}
+
 // On créé un nouveau document
 void Notepad::newDocument() {
     currentFilePath.clear();
-    ui->textArea->setText(QString());
     setWindowTitle("Notepad : Nouveau Document");
+    //création d'un nouveau parcours
+    addParcours("", "", 0, 0, 0.0f, 0.0f, "", "");
+    parcoursList.last()->addEtape("", "", 0, 0, 0.0f, "N", 0, 0.0f, "E");
+    ui->nomEtape->setText("");
+    ui->latitudeSpinBox->setValue(0.0f);
+    ui->LongitudeSpinBox->setValue(0.0f);
+    ui->reponse->setValue(0);
+    ui->textArea->setHtml("");
+    ui->numEtape->setValue(1);
+    ui->numEtape->setMaximum(1);
+    ui->numParcours->setMaximum(parcoursList.size());
+    ui->numParcours->setValue(parcoursList.size());
+    ui->nomParcours->setText("");
+    ui->localisationInput->setText("");
+    ui->dptInput->setValue(0);
+    ui->diffuculteInput->setValue(0);
+    ui->dureeInput->setValue(0.0f);
+    ui->longueurInput->setValue(0.0f);
+    ui->sideImage->setText("Aucune image");
+    ui->imagePath->setText("");
+    ui->enteteArea->setText("");
+
 }
 
 // On ouvre un document
@@ -186,7 +235,65 @@ void Notepad::afficherParcours(int index) {
     afficherEtape(0);
 }
 
+void Notepad::createParcours(int parcoursIndex) {
+    QString nom = ui->nomParcours->text();
+    QString localisation = ui->localisationInput->text();
+    unsigned short int departement = ui->dptInput->value();
+    unsigned short int difficulte = ui->diffuculteInput->value();
+    float duree = ui->dureeInput->value();
+    float longueur = ui->longueurInput->value();
+    QString imagePath = ui->imagePath->text();
+    QString entete = ui->enteteArea->toPlainText();
+
+    if (parcoursList.size()==0)
+        addParcours(nom, localisation, departement, difficulte, duree, longueur, imagePath, entete);
+    else {
+        // Redimensionner le vecteur de parcours si besoin
+        if (parcoursIndex >= parcoursList.size())
+            parcoursList.resize(parcoursIndex + 1, nullptr);
+
+        delete parcoursList[parcoursIndex];
+
+        parcoursList[parcoursIndex] = new Parcours(nom, localisation, departement, difficulte, duree, longueur, imagePath, entete);
+    }
+}
+
+void Notepad::createEtape(int parcoursIndex, int etapeIndex) {
+    QString titre = ui->nomEtape->text();
+    QString dialog = ui->textArea->toPlainText();
+    int reponse = ui->reponse->value();
+    int latD = static_cast<int>(ui->latitudeSpinBox->value());
+    float latM = ui->latitudeSpinBox->value() - latD;
+    QString NS = (latD >= 0) ? "N" : "S";
+    int lonD = static_cast<int>(ui->LongitudeSpinBox->value());
+    float lonM = ui->LongitudeSpinBox->value() - lonD;
+    QString WE = (lonD >= 0) ? "E" : "W";
+
+    Parcours* parcours = parcoursList[parcoursIndex];
+    if (parcours->getNombreEtapes()==0)
+        parcours->addEtape(titre, dialog, reponse,
+        latD, latM, NS,
+        lonD, lonM, WE);
+    else {
+        QVector<Etape*> etapes = parcours->getEtapes();
+        if (parcoursIndex >= parcoursList.size())
+            parcoursList.resize(parcoursIndex + 1, nullptr);
+
+        delete etapes[etapeIndex];
+
+        parcoursList.at(parcoursIndex)->getEtapes()[etapeIndex] = new Etape(titre, dialog, reponse,
+                                                                            latD, latM, NS,
+                                                                            lonD, lonM, WE);
+    }
+}
+
 void Notepad::save() {
+
+    if (ui->nomParcours->text() == "" || ui->nomParcours->text().isEmpty()) {
+        QMessageBox::warning(this, "Warning", "Le nom du parcours ne peut pas être vide.");
+        return;
+    }
+
     QString filePath = "data/saves/" + ui->nomParcours->text() + ".txt";
 
     QDir dir("data");
@@ -202,7 +309,7 @@ void Notepad::save() {
         QMessageBox::warning(this, "Warning", "Impossible d'enregistrer le fichier : " + file.errorString());
         return;
     }
-    setWindowTitle("Tèrr’Aventura creator : " + filePath);
+    setWindowTitle("Tèrr’Aventura creator : " + QFileInfo(file).absoluteFilePath());
     QTextStream out(&file);
 
     out << ui->nomParcours->text() << "\n";
@@ -212,16 +319,22 @@ void Notepad::save() {
     out << ui->dureeInput->value() << "\n";
     out << ui->longueurInput->value() << "\n";
     out << ui->imagePath->text() << "\n";
-    out << ui->enteteArea->toPlainText() << "%\n";
+    out << ui->enteteArea->toPlainText().trimmed() << "\n";
+    out << "%\n";
 
-    Parcours* parcours = parcoursList.at(ui->numParcours->value()-1);
+
+    int indexToGet = ui->numParcours->value() - 1;
+    createParcours(indexToGet);
+    createEtape(indexToGet, 0);
+
+    Parcours* parcours = parcoursList.at(indexToGet);
     int cpt = 1;
     for (Etape* etape : parcours->getEtapes()) {
         out << cpt++ << "\n";
         out << etape->getTitre() << "\n";
         out << etape->getCoordonnee(true) << "\n";
         out << etape->getReponse() << "\n";
-        out << etape->getDialog(); //TODO: ajouter les # pour les dialogues
+        out << etape->getDialog().trimmed() << "\n"; //TODO: ajouter les # pour les dialogues
         out << "%\n";
     }
 
@@ -494,8 +607,6 @@ void Notepad::insertImage() {
     }
 }
 
-
-
 void Notepad::selectFont() {
     bool fontSelected;
     QFont font = QFontDialog::getFont(&fontSelected, this);
@@ -554,16 +665,12 @@ void Notepad::showAbout() {
 }
 
 void Notepad::onNumEtapeChanged(int value) {
-    //TODO: enregistrer l'étape avant de changer (pour ça faut faire la fonction save avant)
-    if (value < 1 || value > parcoursList.at(ui->numParcours->value()-1)->getNombreEtapes())
-        return;
+    //save();
     afficherEtape(value - 1);
 }
 
 void Notepad::onNumParcoursChanged(int value) {
-    //TODO: enregistrer le parcours avant de changer (pour ça faut faire la fonction save avant)
-    if (value < 1 || value > parcoursList.at(ui->numParcours->value()-1)->getNombreEtapes())
-        return;
+    //save();
     afficherParcours(value - 1);
 }
 
@@ -574,11 +681,21 @@ void Notepad::ajouterEtape() {
     }
     //ajout d'une étape sur le parcours courant et champs vides
     Parcours* parcours = parcoursList.at(ui->numParcours->value()-1);
-    int i = ui->numEtape->value();
-    parcours->addEtape(i,"", "", 0, 0, 0.0f, "N", 0, 0.0f, "E");
-    ui->numEtape->setMaximum(parcours->getNombreEtapes()+1);
-    ui->numEtape->setValue(i+1);
-    afficherEtape(i);
+    //check si le parcours a déjà des étapes, si oui, on ajoute l'étape à la fin et si non on prend l'autre fonction addEtape
+    if (parcours->getNombreEtapes() > 0) {
+        int i = parcours->getNombreEtapes();
+        parcours->addEtape(i, "", "", 0, 0, 0.0f, "N", 0, 0.0f, "E");
+        ui->numEtape->setMaximum(parcours->getNombreEtapes()+1);
+        ui->numEtape->setValue(i+1);
+        afficherEtape(i);
+    } else {
+        // Si c'est le premier ajout d'étape, on utilise la méthode addEtape avec des valeurs par défaut
+        parcours->addEtape("", "", 0, 0, 0.0f, "N", 0, 0.0f, "E");
+        ui->numEtape->setMaximum(1);
+        ui->numEtape->setValue(1);
+        afficherEtape(0);
+    }
+
 }
 
 void Notepad::selectionnerImage() {

@@ -34,7 +34,9 @@ add_executable(SAE201 main.cpp
         parcours/Parcours.h
         etape/Etape.cpp
         etape/Etape.h
-)
+        personnage/Personnage.cpp
+        personnage/Personnage.h)
+
 target_link_libraries(SAE201
         Qt::Core
         Qt::Gui

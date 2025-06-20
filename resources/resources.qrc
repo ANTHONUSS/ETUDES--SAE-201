@@ -20,6 +20,8 @@
     <file>icones/underline.png</file>
   </qresource>
   <qresource prefix="Personnages">
+    <file>personnages-parcours/alert.png</file>
+    <file>personnages-parcours/info.svg</file>
     <file>personnages-parcours/zabeth.png</file>
     <file>personnages-parcours/zaitek.png</file>
     <file>personnages-parcours/zart.png</file>
