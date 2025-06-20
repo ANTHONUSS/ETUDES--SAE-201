@@ -567,10 +567,11 @@ void Notepad::ajouterEtape() {
     }
     //ajout d'une étape sur le parcours courant et champs vides
     Parcours* parcours = parcoursList.at(ui->numParcours->value()-1);
-    parcours->addEtape("", "", 0, 0, 0.0f, "N", 0, 0.0f, "E");
-    ui->numEtape->setMaximum(parcours->getNombreEtapes());
-    ui->numEtape->setValue(parcours->getNombreEtapes());
-    afficherEtape(parcours->getNombreEtapes() - 1);
+    int i = ui->numEtape->value();
+    parcours->addEtape(i,"", "", 0, 0, 0.0f, "N", 0, 0.0f, "E");
+    ui->numEtape->setMaximum(parcours->getNombreEtapes()+1);
+    ui->numEtape->setValue(i+1);
+    afficherEtape(i);
 }
 
 
