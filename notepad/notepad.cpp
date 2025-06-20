@@ -44,7 +44,8 @@ Notepad::Notepad(QWidget *parent)
 
     std::cout << "\t[+]NotePad" << std::endl;
     connect(ui->exportMap, &QPushButton::clicked, this, &Notepad::exportMap);
-    connect(ui->supprEtape, &QPushButton::clicked, this, Notepad::supprEtape );
+    connect(ui->supprEtape, &QPushButton::clicked, this, &Notepad::supprEtape);
+    connect(ui->supprimerBouton, &QPushButton::clicked, this, &Notepad::supprParcours);
 }
 
 Notepad::~Notepad() {
@@ -430,7 +431,39 @@ void Notepad::supprEtape() {
     }
 }
 
+void Notepad::supprParcours() {
+    if (parcoursList.size() > 0 && ui->numParcours->value() > 0) {
+        int numParcours = ui->numParcours->value() - 1;
+        if (numParcours < 0 || numParcours >= parcoursList.size()) {
+            QMessageBox::warning(this, "Erreur", "Numéro de parcours invalide.");
+            return;
+        }
 
+        // Supprimer le parcours
+        delete parcoursList.at(numParcours);
+        parcoursList.removeAt(numParcours);
+
+        // Mettre à jour l'interface
+        if (parcoursList.isEmpty()) {
+            ui->numParcours->setValue(0);
+            ui->numEtape->setValue(0);
+            ui->textArea->clear();
+            ui->nomParcours->clear();
+            ui->localisationInput->clear();
+            ui->dptInput->setValue(0);
+            ui->diffuculteInput->setValue(0);
+            ui->dureeInput->setValue(0.0f);
+            ui->longueurInput->setValue(0.0f);
+            ui->sideImage->clear();
+            ui->imagePath->clear();
+            ui->enteteArea->clear();
+        } else {
+            ui->numParcours->setMaximum(parcoursList.size());
+            afficherParcours(qMax(0, numParcours - 1));
+        }
+
+    }
+}
 
 void Notepad::insertImage() {
     QString fileName = QFileDialog::getOpenFileName(this,
