@@ -237,6 +237,7 @@ void Notepad::createEtape(int parcoursIndex, int etapeIndex) {
     }
 }
 
+
 void Notepad::save() {
 
     if (ui->nomParcours->text() == "" || ui->nomParcours->text().isEmpty()) {
