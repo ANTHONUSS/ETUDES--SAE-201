@@ -44,6 +44,7 @@ public:
 	QString getImage() const { return image; }
 	QString getEntete() const { return entete; }
 	int getNombreEtapes() const { return etapes.size(); }
+	QVector<Etape*> getEtapes() const { return etapes; }
 	Etape* getEtape(int index) { return (index >= 0 && index < etapes.size()) ? etapes[index] : nullptr; }
 	void supprimerEtape(int index);
 };

@@ -18,7 +18,6 @@ Notepad::Notepad(QWidget *parent)
     connect(ui->actionNouveau, &QAction::triggered, this, &Notepad::newDocument);
     connect(ui->actionOuvrir, &QAction::triggered, this, &Notepad::open);
     connect(ui->actionEnregistrer, &QAction::triggered, this, &Notepad::save);
-    connect(ui->actionEnregistrer_sous, &QAction::triggered, this, &Notepad::saveAs);
     connect(ui->actionQuitter, &QAction::triggered, this, &QWidget::close);
 
     connect(ui->actionPolice, &QAction::triggered, this, &Notepad::selectFont);
@@ -82,7 +81,6 @@ void Notepad::open() {
         return;
 
     QFile file(fileName);
-    currentFilePath = fileName;
     if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
         QMessageBox::warning(this, "Warning", "Impossible d'ouvrir le fichier : " + file.errorString());
         return;
@@ -134,7 +132,7 @@ void Notepad::open() {
     afficherParcours(parcoursList.size() - 1);
     afficherEtape(0);
 
-    setWindowTitle("Notepad : " + fileName);
+    setWindowTitle("Tèrr’Aventura creator : " + fileName);
     file.close();
 }
 
@@ -176,8 +174,7 @@ void Notepad::afficherParcours(int index) {
     QImage img(parcours->getImage());
     if (!img.isNull()) {
         ui->sideImage->setPixmap(QPixmap::fromImage(img));
-        ui->
-        imagePath->setText(parcours->getImage());
+        ui->imagePath->setText(parcours->getImage());
     } else {
         ui->sideImage->setText("Image non trouvée");
         ui->imagePath->setText(QString());
@@ -189,36 +186,44 @@ void Notepad::afficherParcours(int index) {
 }
 
 void Notepad::save() {
-    QString filePath;
-    if (currentFilePath.isEmpty()) {
-        filePath = QFileDialog::getSaveFileName(this, "Sauvegarder le fichier", "", "Documents HTML (*.html)");
-        currentFilePath = filePath;
-    } else {
-        filePath = currentFilePath;
+    QString filePath = "data/saves/" + ui->nomParcours->text() + ".txt";
+
+    QDir dir("data");
+    if (!dir.exists()) {
+        dir.mkpath(".");
+    }
+    QDir dir2("data/saves");
+    if (!dir2.exists()) {
+        dir2.mkpath(".");
     }
     QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly | QFile::Text)) {
         QMessageBox::warning(this, "Warning", "Impossible d'enregistrer le fichier : " + file.errorString());
         return;
     }
-    setWindowTitle("Notepad : " + filePath);
+    setWindowTitle("Tèrr’Aventura creator : " + filePath);
     QTextStream out(&file);
-    out << ui->textArea->toHtml();
-    file.close();
-}
 
-void Notepad::saveAs() {
-    QString filePath = QFileDialog::getSaveFileName(this, "Enregistrer sous", "", "Documents HTML (*.html)");
-    QFile file(filePath);
+    out << ui->nomParcours->text() << "\n";
+    out << ui->localisationInput->text() << "\n";
+    out << ui->dptInput->value() << "\n";
+    out << ui->diffuculteInput->value() << "\n";
+    out << ui->dureeInput->value() << "\n";
+    out << ui->longueurInput->value() << "\n";
+    out << ui->imagePath->text() << "\n";
+    out << ui->enteteArea->toPlainText() << "%\n";
 
-    if (!file.open(QIODevice::WriteOnly | QFile::Text)) {
-        QMessageBox::warning(this, "Warning", "Impossible d'enregistrer le fichier : " + file.errorString());
-        return;
+    Parcours* parcours = parcoursList.at(ui->numParcours->value()-1);
+    int cpt = 1;
+    for (Etape* etape : parcours->getEtapes()) {
+        out << cpt++ << "\n";
+        out << etape->getTitre() << "\n";
+        out << etape->getCoordonnee(true) << "\n";
+        out << etape->getReponse() << "\n";
+        out << etape->getDialog(); //TODO: ajouter les # pour les dialogues
+        out << "%\n";
     }
-    currentFilePath = filePath;
-    setWindowTitle("Notepad : " + filePath);
-    QTextStream out(&file);
-    out << ui->textArea->toHtml();
+
     file.close();
 }
 
@@ -391,6 +396,7 @@ void Notepad::exportMap() {
     QMessageBox::information(this, "Exportation de la carte",
                            "Carte exportée avec succès en HTML.", QMessageBox::Ok);
 }
+
 void Notepad::supprEtape() {
     if (ui->numEtape->value() - 1!=0) {
     int numEtape = ui->numEtape->value() - 1;
