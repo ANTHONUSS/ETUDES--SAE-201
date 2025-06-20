@@ -700,20 +700,46 @@ void Notepad::ajouterEtape() {
 
 void Notepad::selectionnerImage() {
     QString fileName = QFileDialog::getOpenFileName(this, "Sélectionner une image", "", "Images (*.png *.jpg *.jpeg *.bmp *.gif)");
-    if (!fileName.isEmpty()) {
-        ui->imagePath->setText(fileName);
+    if (fileName.isEmpty()) return;
 
-        QImageReader reader(fileName);
-        reader.setAutoTransform(true); // Gestion correcte de l'orientation EXIF
-        QImage img = reader.read();
+    ui->imagePath->setText(fileName);
+    QFileInfo fileInfo(fileName);
+    QString extension = fileInfo.suffix().toLower();
+    bool isJpeg = (extension == "jpg" || extension == "jpeg");
 
-        if (!img.isNull()) {
-            ui->sideImage->setPixmap(QPixmap::fromImage(img));
-        } else {
-            QString errorMsg = reader.errorString();
-            ui->sideImage->setText("Erreur: " + errorMsg);
-            QMessageBox::warning(this, "Erreur de chargement d'image",
-                                "Impossible de charger l'image: " + errorMsg);
+    if (isJpeg) {
+        // Méthode manuelle de conversion JPEG -> PNG
+        QFile file(fileName);
+        if (!file.open(QIODevice::ReadOnly)) {
+            ui->sideImage->setText("Impossible d'ouvrir le fichier");
+            return;
         }
+
+        QByteArray jpegData = file.readAll();
+        file.close();
+
+        // Tenter de créer une QImage à partir des données brutes avec différents formats
+        QImage img;
+        if (!img.loadFromData(jpegData, "JPEG")) {
+            if (!img.loadFromData(jpegData)) {
+                ui->sideImage->setText("Impossible de décoder l'image");
+                return;
+            }
+        }
+
+        // Si on arrive ici, la QImage a été créée
+        // Sauvegarder en PNG
+        QString tempPath = QDir::tempPath() + "/" + fileInfo.baseName() + "_temp.png";
+        if (img.save(tempPath, "PNG")) {
+            fileName = tempPath;
+            qDebug() << "Image convertie en PNG:" << tempPath;
+        }
+    }
+
+    QImage img(fileName);
+    if (!img.isNull()) {
+        ui->sideImage->setPixmap(QPixmap::fromImage(img));
+    } else {
+        ui->sideImage->setText("Format d'image non supporté");
     }
 }
