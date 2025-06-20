@@ -44,12 +44,18 @@ Parcours::~Parcours() {
 	etapes.clear();
 	std::cout << "\t[-]parcours" << std::endl;
 }
-
-
 void Parcours::addEtape(const QString &titre, const QString &dialog, int reponse,
 		int latD, float latM, QString NS,
 		int lonD, float lonM, QString WE) {
 	etapes.push_back(new Etape(titre, dialog, reponse,
+		latD, latM, NS,
+		lonD, lonM, WE));
+}
+
+void Parcours::addEtape(int i, const QString &titre, const QString &dialog, int reponse,
+		int latD, float latM, QString NS,
+		int lonD, float lonM, QString WE) {
+	etapes.insert(i,new Etape(titre, dialog, reponse,
 		latD, latM, NS,
 		lonD, lonM, WE));
 }

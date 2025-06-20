@@ -43,6 +43,8 @@ Notepad::Notepad(QWidget *parent)
 
     std::cout << "\t[+]NotePad" << std::endl;
     connect(ui->exportMap, &QPushButton::clicked, this, &Notepad::exportMap);
+    connect(ui->supprEtape, &QPushButton::clicked, this, &Notepad::supprEtape);
+    connect(ui->supprimerBouton, &QPushButton::clicked, this, &Notepad::supprParcours);
     connect(ui->supprEtape, &QPushButton::clicked, this, Notepad::supprEtape );
     connect(ui->ajouterEtape, &QPushButton::clicked, this, &Notepad::ajouterEtape);
 }
@@ -471,7 +473,39 @@ void Notepad::supprEtape() {
     }
 }
 
+void Notepad::supprParcours() {
+    if (parcoursList.size() > 0 && ui->numParcours->value() > 0) {
+        int numParcours = ui->numParcours->value() - 1;
+        if (numParcours < 0 || numParcours >= parcoursList.size()) {
+            QMessageBox::warning(this, "Erreur", "Numéro de parcours invalide.");
+            return;
+        }
 
+        // Supprimer le parcours
+        delete parcoursList.at(numParcours);
+        parcoursList.removeAt(numParcours);
+
+        // Mettre à jour l'interface
+        if (parcoursList.isEmpty()) {
+            ui->numParcours->setValue(0);
+            ui->numEtape->setValue(0);
+            ui->textArea->clear();
+            ui->nomParcours->clear();
+            ui->localisationInput->clear();
+            ui->dptInput->setValue(0);
+            ui->diffuculteInput->setValue(0);
+            ui->dureeInput->setValue(0.0f);
+            ui->longueurInput->setValue(0.0f);
+            ui->sideImage->clear();
+            ui->imagePath->clear();
+            ui->enteteArea->clear();
+        } else {
+            ui->numParcours->setMaximum(parcoursList.size());
+            afficherParcours(qMax(0, numParcours - 1));
+        }
+
+    }
+}
 
 void Notepad::insertImage() {
     QString fileName = QFileDialog::getOpenFileName(this,
@@ -576,10 +610,11 @@ void Notepad::ajouterEtape() {
     }
     //ajout d'une étape sur le parcours courant et champs vides
     Parcours* parcours = parcoursList.at(ui->numParcours->value()-1);
-    parcours->addEtape("", "", 0, 0, 0.0f, "N", 0, 0.0f, "E");
-    ui->numEtape->setMaximum(parcours->getNombreEtapes());
-    ui->numEtape->setValue(parcours->getNombreEtapes());
-    afficherEtape(parcours->getNombreEtapes() - 1);
+    int i = ui->numEtape->value();
+    parcours->addEtape(i,"", "", 0, 0, 0.0f, "N", 0, 0.0f, "E");
+    ui->numEtape->setMaximum(parcours->getNombreEtapes()+1);
+    ui->numEtape->setValue(i+1);
+    afficherEtape(i);
 }
 
 

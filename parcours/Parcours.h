@@ -26,6 +26,9 @@ public:
     ~Parcours();
 
 
+	void addEtape(int i, const QString &titre, const QString &dialog, int reponse,
+		int latD, float latM, QString NS,
+		int lonD, float lonM, QString WE);
 	void addEtape(const QString &titre, const QString &dialog, int reponse,
 		int latD, float latM, QString NS,
 		int lonD, float lonM, QString WE);
