@@ -12,6 +12,7 @@
 #include <QFontDialog>
 #include <QColorDialog>
 #include <QPrinter>
+#include <QImageReader>
 #include <iostream>
 #include "../parcours/Parcours.h"
 
@@ -68,6 +69,7 @@ private slots:
 	void supprEtape();
 	void supprParcours();
 	void ajouterEtape();
+	void selectionnerImage();
 
 };
 

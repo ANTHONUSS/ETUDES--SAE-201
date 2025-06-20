@@ -47,6 +47,7 @@ Notepad::Notepad(QWidget *parent)
     connect(ui->supprimerBouton, &QPushButton::clicked, this, &Notepad::supprParcours);
     connect(ui->supprEtape, &QPushButton::clicked, this, Notepad::supprEtape );
     connect(ui->ajouterEtape, &QPushButton::clicked, this, &Notepad::ajouterEtape);
+    connect(ui->imageSelectionButton, &QPushButton::clicked, this, &Notepad::selectionnerImage);
 }
 
 Notepad::~Notepad() {
@@ -580,5 +581,22 @@ void Notepad::ajouterEtape() {
     afficherEtape(i);
 }
 
+void Notepad::selectionnerImage() {
+    QString fileName = QFileDialog::getOpenFileName(this, "Sélectionner une image", "", "Images (*.png *.jpg *.jpeg *.bmp *.gif)");
+    if (!fileName.isEmpty()) {
+        ui->imagePath->setText(fileName);
 
+        QImageReader reader(fileName);
+        reader.setAutoTransform(true); // Gestion correcte de l'orientation EXIF
+        QImage img = reader.read();
 
+        if (!img.isNull()) {
+            ui->sideImage->setPixmap(QPixmap::fromImage(img));
+        } else {
+            QString errorMsg = reader.errorString();
+            ui->sideImage->setText("Erreur: " + errorMsg);
+            QMessageBox::warning(this, "Erreur de chargement d'image",
+                                "Impossible de charger l'image: " + errorMsg);
+        }
+    }
+}
